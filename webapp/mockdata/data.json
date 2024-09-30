@@ -1,0 +1,229 @@
+{
+	"Novedad": [{
+		"Id": "C",
+		"Name": "Comentarios"
+	}, {
+		"Id": "D",
+		"Name": "Desconexion"
+	}, {
+		"Id": "I",
+		"Name": "Intervención en Servicio"
+	}, {
+		"Id": "P",
+		"Name": "Perturbación"
+	}],
+	"Tipos": [{
+		"Id": "P1",
+		"Name": "Autotransformador"
+	}, {
+		"Id": "P2",
+		"Name": "Barra de 132 kV"
+	}, {
+		"Id": "P3",
+		"Name": "Barra de 220 kV"
+	}, {
+		"Id": "P4",
+		"Name": "Barra de 500 kV"
+	}, {
+		"Id": "P5",
+		"Name": "Capacitor"
+	}, {
+		"Id": "P6",
+		"Name": "Compensador sincrónico"
+	}, {
+		"Id": "P7",
+		"Name": "Conexión de 132 kV"
+	}, {
+		"Id": "P8",
+		"Name": "Conexión de 220 kV"
+	}, {
+		"Id": "P9",
+		"Name": "Conexión de 500 kV"
+	}, {
+		"Id": "P10",
+		"Name": "Estación"
+	}, {
+		"Id": "P11",
+		"Name": "Línea de 132 kV"
+	}, {
+		"Id": "P12",
+		"Name": "Línea de 220 kV"
+	}, {
+		"Id": "P13",
+		"Name": "Línea de 345 kV"
+	}, {
+		"Id": "P14",
+		"Name": "Línea de 500 kV"
+	}, {
+		"Id": "P15",
+		"Name": "Otros"
+	}, {
+		"Id": "P16",
+		"Name": "Reactor de barra"
+	}, {
+		"Id": "P17",
+		"Name": "Reactor de línea"
+	}, {
+		"Id": "P18",
+		"Name": "Reactor de terciarios"
+	}, {
+		"Id": "P19",
+		"Name": "Transformador"
+	}],
+	"Ubicaciones": [{
+		"Id": "RM",
+		"Name": "Región Metropolitana"
+	}, {
+		"Id": "RN",
+		"Name": "Región Norte"
+	}, {
+		"Id": "RS",
+		"Name": "Región Sur"
+	}, {
+		"Id": "CC",
+		"Name": "Centro de Control"
+	}, {
+		"Id": "ET1",
+		"Name": "E.T. Abasto"
+	}, {
+		"Id": "ET2",
+		"Name": "E.T. Agua del Cajón"
+	}, {
+		"Id": "ET3",
+		"Name": "E.T. Alicurá"
+	}, {
+		"Id": "ET3",
+		"Name": "E.T. Almafuerte"
+	}],
+	"Equipos": [{
+		"Id": "EQ1",
+		"Name": "P. Conex. 132KV Almafuerte1"
+	}, {
+		"Id": "EQ2",
+		"Name": "P. Conex. 132KV Almafuerte2"
+	}, {
+		"Id": "EQ3",
+		"Name": "P. Conex. 132KV Almafuerte3"
+	}],
+	"Motivos": [{
+		"Id": "1",
+		"Name": "Equipo Principal"
+	}, {
+		"Id": "2",
+		"Name": "Equipos Asociados"
+	}, {
+		"Id": "3",
+		"Name": "Mantenimiento Correctivo"
+	}, {
+		"Id": "4",
+		"Name": "Mantenimiento Programado"
+	}, {
+		"Id": "5",
+		"Name": "Protecciones / Control"
+	}, {
+		"Id": "6",
+		"Name": "Terceros, como conseguencia de"
+	}, {
+		"Id": "7",
+		"Name": "Ver Comentarios"
+	}],
+	"Estados": [{
+		"Id": "B",
+		"Name": "Bueno"
+	}, {
+		"Id": "D",
+		"Name": "Desconocido"
+	}, {
+		"Id": "I",
+		"Name": "Inestable"
+	}, {
+		"Id": "L",
+		"Name": "Llovizna"
+	}, {
+		"Id": "LL",
+		"Name": "Lluvioso"
+	}, {
+		"Id": "NE",
+		"Name": "Nevado"
+	}, {
+		"Id": "NI",
+		"Name": "Niebla"
+	}, {
+		"Id": "NU",
+		"Name": "Nublado"
+	}, {
+		"Id": "TO",
+		"Name": "Tormenta"
+	}, {
+		"Id": "TV",
+		"Name": "Tormenta de Viento"
+	}, {
+		"Id": "TE",
+		"Name": "Tormenta Eléctrica"
+	}, {
+		"Id": "TR",
+		"Name": "Tornado"
+	}, {
+		"Id": "TS",
+		"Name": "Tsunami"
+	}],
+	"Actuantes": [{
+		"Id": "LL",
+		"Name": "Lógica Local"
+	}, {
+		"Id": "NI",
+		"Name": "Ninguno"
+	}, {
+		"Id": "PDV",
+		"Name": "PDV"
+	}, {
+		"Id": "PR",
+		"Name": "Protecciones"
+	}, {
+		"Id": "TDD",
+		"Name": "TDD"
+	}],
+	"AreaResp": [{
+		"Id": "01",
+		"Name": "Comunicaciones"
+	}, {
+		"Id": "02",
+		"Name": "Estaciones"
+	}, {
+		"Id": "03",
+		"Name": "Estaciones/Comunicaciones"
+	}, {
+		"Id": "04",
+		"Name": "Estaciones/Líneas "
+	}, {
+		"Id": "05",
+		"Name": "Estaciones/Líneas/Comunicaciones "
+	}],
+	"Causa": [{
+		"Id": "01",
+		"Name": "Equipo Principal-Ver Comentarios"
+	}, {
+		"Id": "02",
+		"Name": "Equipos Asociados-Ver Comentarios"
+	}, {
+		"Id": "03",
+		"Name": "Protecciones/Control-Ver Comentarios"
+	}],
+	"TipoFalla": [{
+		"Id": "AB",
+		"Name": "Apertura Bifásica"
+	}, {
+		"Id": "AM",
+		"Name": "Apertura Monofásica"
+	}, {
+		"Id": "CB",
+		"Name": "Cortoc. Bifásica"
+	}, {
+		"Id": "CT",
+		"Name": "Cortoc. Bifásica a Tierra"
+	}],
+	"UbicFalla": [{
+		"Id": "N/A",
+		"Name": "N/A"
+	}]
+}

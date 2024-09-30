@@ -1,0 +1,119 @@
+.CustomPanel {
+    border: solid 2px grey;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.CustomTabHeder {
+    background-color: #dddddd;
+}
+
+.sapMITH {
+    box-shadow: inset 0 -0.25rem 0 -0.125rem #d1e0ee;
+   background-color: #dddddd;
+    border-bottom: 0.125rem solid #eff4f9;
+}
+
+.CustomTab {
+    background-color: #ebebeb;
+}
+
+.sapMITBContent {
+    padding: 1rem;
+    position: relative;
+    background-color: white;
+}
+
+.CustomLabel {
+    margin-top: 5px;
+}
+
+.CustomMargin {
+    margin-left: 10px;
+}
+
+.CustomFlex {
+}
+.CustomPage .sapUiBlockLayoutSizeL .sapUiBlockCellContent {
+    padding: 1rem 1rem;
+    font-size: 1rem;
+}
+
+.customPage .sapMITBContent {
+	background-color: white;
+}
+
+.PaddingTable {
+	padding-top: 20px;
+}
+
+.sapMITBHead {
+	margin-top: 0px;
+}
+
+.indent1ColumnFlex{
+	margin-left: 12.5%;
+	width: 87.5%;
+}
+
+.indent2ColumnFlex{
+	margin-left: 12.5%;
+	width: 87.5%;
+}
+
+.floatRight {
+	float: right;
+}
+
+.formContainer {
+	background-color: white;
+}
+
+.CustomPage .sapUiBlockCellContent {
+    background-color: #d3d3d33d;
+}
+
+.CustomPage .sapMITBInLine.sapMITBTextOnly>.sapMITBVertical {
+	height: 2rem;
+}
+
+.CustomPage .sapMITBInLine.sapMITBTextOnly>.sapMITBVertical>div {
+    margin-top: 0px;
+}
+
+.thinHR {
+	opacity: 0.50;
+}
+
+.heightvh50.sapMInputBase.sapMTextArea {
+	height: 50vh;
+}
+
+.form {
+	padding-left: 35px;
+    padding-right: 35px;
+	padding-top:3px;
+	background-color:#d3d3d375;
+}
+
+.formFooter {
+	padding-left: 15px;
+	padding-right: 15px;
+	background-color:#dddddd;
+}
+
+.formFooter .sapMPanelContent {
+	padding: 0px;
+}
+
+.firstCheckBox .sapMCbBg {
+	left: 0;
+}
+
+.sapMCb.firstCheckBox {
+	padding-left: 2rem;
+}
+
+html.sap-desktop .sapMCb.firstCheckBox:not(.sapMCbBgDis):not(.sapMCbDisplayOnly).sapMCbHasLabel:focus:before {
+	left: 0;
+}

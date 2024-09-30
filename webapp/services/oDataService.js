@@ -1,0 +1,68 @@
+sap.ui.define([
+	"Transener/Operaciones/NovedadesServicio/utils/AppManagementHelper"
+],
+
+	function (AppManagementHelper) {
+		"use strict";
+		return {
+			_destination: "/destinations/SAP_Gateway",
+			_servicePath: "/sap/opu/odata/sap/Z_SCP_OPERACIONES_SRV",
+			//session language
+			_defaultSessionLanguage: "ES",
+			_otherSessionLanguages: [
+				//"EN","PT"
+			],
+
+			_services: {
+				TransenerOperaciones: "/destinations/SAP_Gateway/sap/opu/odata/sap/Z_SCP_OPERACIONES_SRV"
+			},
+			_models: {},
+
+			_getSessionLanguage: function () {
+				//gets browser language
+				var browserLanguage = sap.ui.getCore().getConfiguration().getSAPLogonLanguage();
+				//finds language
+				var results = jQuery.grep(this._otherSessionLanguages, function (otherLanguage) {
+					return browserLanguage === otherLanguage;
+				});
+				//returns sap session language
+				return (results.length > 0) ? browserLanguage : this._defaultSessionLanguage;
+			},
+
+			_getBaseUrl: function () {
+				debugger;
+				var mBaseUrl = sap.ui.getCore().getModel("appCurrentInfo").appUrl;
+				return mBaseUrl;
+			},
+
+			_model: null,
+			getModel: function (name) {
+
+				if (!this._models[name]) {
+					var sessionLanguage = this._getSessionLanguage();
+					//var url = this._services[name];
+					var baseurl = this._getBaseUrl();
+					var url = baseurl + this._services[name];
+					this._models[name] = new sap.ui.model.odata.v2.ODataModel(url, {
+						json: true,
+						useBatch: false,
+						headers: {
+							"DataServiceVersion": "2.0",
+							"Cache-Control": "no-cache, no-store",
+							"Pragma": "no-cache"
+						},
+						metadataUrlParams: {
+							"sap-language": sessionLanguage
+						},
+						serviceUrlParams: {
+							"sap-language": sessionLanguage
+						},
+						defaultUpdateMethod: "PUT"
+					});
+				}
+				this._models[name].setSizeLimit(99999);
+				AppManagementHelper.getApp().setModel(this._models[name], name);
+				return this._models[name];
+			}
+		};
+	});

@@ -1,0 +1,1362 @@
+<mvc:View controllerName="Transener.Operaciones.NovedadesServicio.controller.Main" xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:form="sap.ui.layout.form" xmlns:core="sap.ui.core"
+	xmlns:t="sap.ui.table" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:custom="Transener.Operaciones.NovedadesServicio.components">
+	<App id="app">
+		<pages>
+			<!--<Page class="CustomPage" showHeader="false " enableScrolling="false">-->
+			<Page class="CustomPage" showHeader="false" >
+				<footer>
+					<Bar>
+						<contentLeft>
+							<Button icon="sap-icon://sap-box" text="Equipos" visible="{= ${UserDataModel>/oVisualizador} &amp;&amp; ${UserDataModel>/viewEquipos} }"
+								press="goToEquipment" class="buttonInverted"/>
+							<Button icon="sap-icon://document" text="Nuevo" visible="{UserDataModel>/oVisualizador}" press="cleanFormsByTab" class="buttonInverted"/>
+							<Button icon="sap-icon://delete" text="Borrar" visible="{UserDataModel>/oVisualizador}" press="deleteNovedad" class="buttonInverted"/>
+							<MenuButton text="Informes" defaultAction="onDefaultAction" icon="sap-icon://hint" useDefaultActionOnly="true" class="buttonInverted"
+								menuPosition="RightBottom">
+								<menu>
+									<Menu itemSelected="onMenuAction">
+										<items>
+											<MenuItem press="filtersInformeDiario" text="Informe Diario" icon="sap-icon://hint"/>
+											<MenuItem press="reportNovedadesTipoEquipo" text="Novedades por Tipo de Equipo" icon="sap-icon://hint"/>
+											<MenuItem press="reportENS" text="Reportes ENS" icon="sap-icon://hint"/>
+											<MenuItem press="dialogENREExcel" text="Reporte ENRE 390" icon="sap-icon://hint"/>
+											<MenuItem press="reportesPDF" text="reportes ENRE PDF" icon="sap-icon://hint"/>
+											<!--<MenuItem press="reportePDFENRESalidas" text="Reporte ENRE Salidas" icon="sap-icon://hint"/>
+											<MenuItem press="reportePDFENRECapacidadTransporte" text="Reporte ENRE Capacidad Transporte" icon="sap-icon://hint"/>
+											<MenuItem press="reportePDFENREPotenciaReactiva" text="Reporte ENRE Potencia Reactiva" icon="sap-icon://hint"/ -->
+											<MenuItem press="reporteDBF" text="Informe CAMMESA" icon="sap-icon://hint"/>
+											<MenuItem press="dialogPenalidadesFilter" text="Penalizaciones" icon="sap-icon://hint"/>
+										</items>
+									</Menu>
+								</menu>
+							</MenuButton>
+						</contentLeft>
+						<contentRight>
+							<Button icon="sap-icon://save" text="{ parts: [ 'UtilsJsonModel>/editableMode' ], formatter: '.formatName' }" type="Emphasized"
+								press="addOperation" visible="{UserDataModel>/oVisualizador}" class="buttonInverted"/>
+						</contentRight>
+					</Bar>
+				</footer>
+				<content>
+					<HBox alignItems="Center" direction="Row" width="auto" height="auto" class="sapUiMediumMargin ContentHeader" renderType="Div"
+						displayInline="false">
+						<items>
+							<HBox alignItems="Start" width="65%" class="ContentTitle" justifyContent="Start">
+								<items>
+									<Title text="{i18n>textHeader}" titleStyle="H3" class="titleBlue" textAlign="Begin" visible="true"/>
+								</items>
+								<layoutData/>
+							</HBox>
+						</items>
+					</HBox>
+					<IconTabBar id="idIconTabBarNoIcons" expandable="false" expanded="{device>/isNoPhone}" select="handleTabs"
+						selectedKey="{UtilsJsonModel>/SelectedKeyTab}">
+						<items>
+							<IconTabFilter text="Datos Generales" class="formContainer" key="1">
+								<customData>
+									<core:CustomData key="id" value="GENERAL"/>
+								</customData>
+								<ScrollContainer vertical="true" height="100%" horizontal="false">
+									<l:VerticalLayout id="containerLayout"  width="100%" class="formContainer">
+										<l:BlockLayout id="BlockLayout" background="Dashboard">
+											<l:BlockLayoutRow accentCells="Block1">
+												<l:BlockLayoutCell id="Accent1.0" width="2">
+													<FlexBox alignItems="Start" width="100%">
+														<items>
+															<Label text="Novedad" width="70px" class="CustomLabel">
+																<layoutData>
+																	<FlexItemData growFactor="1"/>
+																</layoutData>
+															</Label>
+															<ComboBox editable="{= (${UtilsJsonModel>/editable} &amp;&amp; ${UserDataModel>/oVisualizador}) || ${UserDataModel>/viewEquipos}}" selectionChange="onChangeNov"
+																enabled="{= ${UserDataModel>/viewEquipos} || ${UtilsJsonModel>/editable}}"
+																valueState="{NovedadesFormJsonModel>/CodNovedadState}" valueStateText="{NovedadesFormJsonModel>/CodNovedadStateMessage}"
+																items="{ path : 'TransenerOperaciones>/FixedValuesSet', filters : [ { path : 'Tabname', operator : 'EQ', value1 : 'ZTAP_OP_NS_GRAL'}, { path : 'Fieldname', operator : 'EQ', value1 : 'COD_NOVEDAD'} ] }"
+																id="CodNovedadKeyCombo" width="160px" selectedKey="{NovedadesFormJsonModel>/CodNovedad}" app:inputId="Ncode" busy="{Novedades>Busy}">
+																<core:Item key="{TransenerOperaciones>Valkey}" text="{TransenerOperaciones>Valkey}"/>
+																<layoutData>
+																	<FlexItemData growFactor="0"/>
+																</layoutData>
+															</ComboBox>
+															<ComboBox editable="{= (${UtilsJsonModel>/editable} &amp;&amp; ${UserDataModel>/oVisualizador}) || ${UserDataModel>/viewEquipos}}" selectionChange="onChangeNov"
+																enabled="{= ${UserDataModel>/viewEquipos} || ${UtilsJsonModel>/editable}}"
+																valueState="{NovedadesFormJsonModel>/CodNovedadState}" valueStateText="{NovedadesFormJsonModel>/CodNovedadStateMessage}"
+																items="{ path : 'TransenerOperaciones>/FixedValuesSet', filters : [ { path : 'Tabname', operator : 'EQ', value1 : 'ZTAP_OP_NS_GRAL'}, { path : 'Fieldname', operator : 'EQ', value1 : 'COD_NOVEDAD'} ] }"
+																id="CodNovedadTextCombo" width="100%" selectedKey="{NovedadesFormJsonModel>/CodNovedad}" app:inputId="Ncode">
+																<core:Item key="{TransenerOperaciones>Valkey}" text="{TransenerOperaciones>Valtext}"/>
+																<layoutData>
+																	<FlexItemData growFactor="10"/>
+																</layoutData>
+															</ComboBox>
+														</items>
+													</FlexBox>
+													<FlexBox alignItems="Start" width="100%">
+														<items>
+															<Label text="Tipo" width="70px" class="CustomLabel">
+																<layoutData>
+																	<FlexItemData growFactor="1"/>
+																</layoutData>
+															</Label>
+															<ComboBox editable="{= (${UtilsJsonModel>/editable} &amp;&amp; ${UserDataModel>/oVisualizador}) || ${UserDataModel>/viewEquipos}}" width="160px"
+																enabled="{= ${UserDataModel>/viewEquipos} || ${UtilsJsonModel>/editable}}"
+																valueState="{NovedadesFormJsonModel>/CodTipoState}" change="tipoEquipoChanged"
+																valueStateText="{NovedadesFormJsonModel>/CodTipoStateMessage}" items="{TipoEquipoJsonModel>/TipoEquipo}"
+																selectedKey="{NovedadesFormJsonModel>/CodTipo}" app:inputId="NTipo">
+																<core:Item key="{TipoEquipoJsonModel>Tipo}" text="{TipoEquipoJsonModel>Tipo}"/>
+																<layoutData>
+																	<FlexItemData growFactor="0"/>
+																</layoutData>
+															</ComboBox>
+															<ComboBox editable="{= (${UtilsJsonModel>/editable} &amp;&amp; ${UserDataModel>/oVisualizador}) || ${UserDataModel>/viewEquipos}}"
+																enabled="{= ${UserDataModel>/viewEquipos} || ${UtilsJsonModel>/editable}}"
+																valueState="{NovedadesFormJsonModel>/CodTipoState}" change="tipoEquipoChanged"
+																valueStateText="{NovedadesFormJsonModel>/CodTipoStateMessage}" items="{TipoEquipoJsonModel>/TipoEquipo}" width="100%"
+																selectedKey="{NovedadesFormJsonModel>/CodTipo}" app:inputId="NTipo">
+																<core:Item key="{TipoEquipoJsonModel>Tipo}" text="{TipoEquipoJsonModel>Descripcion}"/>
+																<layoutData>
+																	<FlexItemData growFactor="10"/>
+																</layoutData>
+															</ComboBox>
+														</items>
+													</FlexBox>
+													<FlexBox alignItems="Start" width="100%">
+														<items>
+															<Label text="Ubicacion" width="70px" class="CustomLabel">
+																<layoutData>
+																	<FlexItemData growFactor="1"/>
+																</layoutData>
+															</Label>
+															<ComboBox enabled="{parts: ['UtilsJsonModel>/editable', 'NovedadesFormJsonModel>/CodTipo', 'UserDataModel>/viewEquipos'], formatter: '.isUbicacionEditable'}"
+																editable="{UserDataModel>/oVisualizador}" change="changeUbicacion" valueState="{NovedadesFormJsonModel>/TplnrState}"
+																valueStateText="{NovedadesFormJsonModel>/TplnrStateMessage}" items="{EstacionesJsonModel>/Estaciones}" width="160px"
+																selectedKey="{NovedadesFormJsonModel>/Tplnr}" app:inputId="NUbicacion">
+																<core:Item key="{EstacionesJsonModel>Codigo}" text="{EstacionesJsonModel>Codigo}"/>
+																<layoutData>
+																	<FlexItemData growFactor="0"/>
+																</layoutData>
+															</ComboBox>
+															<ComboBox enabled="{parts: ['UtilsJsonModel>/editable', 'NovedadesFormJsonModel>/CodTipo', 'UserDataModel>/viewEquipos'], formatter: '.isUbicacionEditable'}"
+																editable="{UserDataModel>/oVisualizador}" change="changeUbicacion" valueState="{NovedadesFormJsonModel>/TplnrState}"
+																valueStateText="{NovedadesFormJsonModel>/TplnrStateMessage}" items="{EstacionesJsonModel>/Estaciones}" width="100%"
+																selectedKey="{NovedadesFormJsonModel>/Tplnr}" app:inputId="NUbicacion">
+																<core:Item key="{EstacionesJsonModel>Codigo}" text="{EstacionesJsonModel>Descripcion}"/>
+																<layoutData>
+																	<FlexItemData growFactor="10"/>
+																</layoutData>
+															</ComboBox>
+														</items>
+													</FlexBox>
+													<FlexBox alignItems="Start" width="100%">
+														<items>
+															<Label text="Equipo" width="70px" class="CustomLabel">
+																<layoutData>
+																	<FlexItemData growFactor="1"/>
+																</layoutData>
+															</Label>
+															<custom:isComboBox editable="{= (${UtilsJsonModel>/editable} &amp;&amp; ${UserDataModel>/oVisualizador}) || ${UserDataModel>/viewEquipos}}"
+																enabled="{= ${UserDataModel>/viewEquipos} || ${UtilsJsonModel>/editable}}"
+																valueState="{NovedadesFormJsonModel>/EqunrState}" valueStateText="{NovedadesFormJsonModel>/EqunrStateMessage}"
+																items="{ path: 'EquiposJsonModel>/Equipos'}" width="160px" change="getSubindice" selectedKey="{NovedadesFormJsonModel>/Equnr}"
+																app:inputId="NEquipo">
+																<core:Item key="{EquiposJsonModel>Codigo}" text="{EquiposJsonModel>Codigo}"/>
+																<custom:layoutData>
+																	<FlexItemData growFactor="0"/>
+																</custom:layoutData>
+															</custom:isComboBox>
+															<custom:isComboBox editable="{= (${UtilsJsonModel>/editable} &amp;&amp; ${UserDataModel>/oVisualizador}) || ${UserDataModel>/viewEquipos}}"
+																enabled="{= ${UserDataModel>/viewEquipos} || ${UtilsJsonModel>/editable}}"
+																valueState="{NovedadesFormJsonModel>/EqunrState}" valueStateText="{NovedadesFormJsonModel>/EqunrStateMessage}"
+																items="{ path: 'EquiposJsonModel>/Equipos'}" width="100%" change="getSubindice" selectedKey="{NovedadesFormJsonModel>/Equnr}"
+																app:inputId="NEquipo">
+																<core:Item key="{EquiposJsonModel>Codigo}" text="{EquiposJsonModel>Descripcion}"/>
+																<custom:layoutData>
+																	<FlexItemData growFactor="10"/>
+																</custom:layoutData>
+															</custom:isComboBox>
+														</items>
+													</FlexBox>
+													<html:hr class="thinHR"></html:hr>
+													<Panel width="auto" class="">
+														<content>
+															<l:Grid>
+																<Label text="Subindice" width="120px" class="CustomLabel" visible="false">
+																	<layoutData>
+																		<l:GridData span="L3 M12 S12" indent="L9"/>
+																	</layoutData>
+																</Label>
+																<Label text="Inicio de Novedad" width="120px" class="CustomLabel">
+																	<layoutData>
+																		<l:GridData span="L3 M12 S12"/>
+																	</layoutData>
+																</Label>
+																<DateTimePicker valueState="{NovedadesFormJsonModel>/InicioNoveState}" displayFormat="dd/MM/yy HH:mm"
+																	editable="{UserDataModel>/oVisualizador}" valueStateText="{NovedadesFormJsonModel>/InicioNoveStateMessage}"
+																	dateValue="{NovedadesFormJsonModel>/InicioNove}" change="inicioNoveChanged" maxDate="{UserDataModel>/DateNow}" initialFocusedDateValue="{UserDataModel>/DateNow}">
+																	<layoutData>
+																		<l:GridData span="L6 M12 S12"/>
+																	</layoutData>
+																</DateTimePicker>
+																<Label text="Subíndice" width="80px" class="CustomLabel">
+																	<layoutData>
+																		<l:GridData span="L2 M12 S12"/>
+																	</layoutData>
+																</Label>
+																<Input enabled="false" value="{path:'NovedadesFormJsonModel>/Subindice', formatter: '.formatSubindice'}"
+																	editable="{UserDataModel>/oVisualizador}">
+																	<layoutData>
+																		<l:GridData span="L1 M12 S12"/>
+																	</layoutData>
+																</Input>
+																<Label text="Indisponible Desde" width="120px" class="CustomLabel">
+																	<layoutData>
+																		<l:GridData span="L3 M12 S12" linebreak="true"/>
+																	</layoutData>
+																</Label>
+																<DateTimePicker valueState="{NovedadesFormJsonModel>/EntIndisState}" valueStateText="{NovedadesFormJsonModel>/EntIndisStateMessage}"
+																	editable="{= ${UserDataModel>/oVisualizador} &amp;&amp; ${UtilsJsonModel>/editableDate}}" enabled="{UtilsJsonModel>/editableDate}" id="DP2"
+																	displayFormat="dd/MM/yy HH:mm" change="handleChangeIndis" minDate="{NovedadesFormJsonModel>/InicioNove}"
+																	dateValue="{NovedadesFormJsonModel>/EntIndis}" maxDate="{UserDataModel>/DateNow}" initialFocusedDateValue="{UserDataModel>/DateNow}">
+																	<layoutData>
+																		<l:GridData span="L6 M12 S12"/>
+																	</layoutData>
+																</DateTimePicker>
+																<!-- minDate="{NovedadesFormJsonModel>/InicioNove}"-->
+															</l:Grid>
+															<!--FlexBox alignItems="Start" class="floatRight">
+																<items>
+																	<Label text="Inicio de Novedad" width="120px" class="CustomLabel"/>
+																	<DateTimePicker valueState="{NovedadesFormJsonModel>/InicioNoveState}" displayFormat="yy/MM/dd HH:mm"
+																		valueStateText="{NovedadesFormJsonModel>/InicioNoveStateMessage}" dateValue="{NovedadesFormJsonModel>/InicioNove}"
+																		class="sapUiSmallMarginBottom"/>
+																</items>
+															</FlexBox>
+															<FlexBox alignItems="Start" class="floatRight">
+																<items>
+																	<Label text="Indisponible Desde" width="121px" class="CustomLabel"/>
+																	<DateTimePicker valueState="{NovedadesFormJsonModel>/EntIndisState}" valueStateText="{NovedadesFormJsonModel>/EntIndisStateMessage}"
+																		dateValue="{NovedadesFormJsonModel>/EntIndis}" id="DP2" displayFormat="yy/MM/dd HH:mm" change="handleChangeIndis"
+																		class="sapUiSmallMarginBottom"/>
+																</items>
+															</FlexBox -->
+														</content>
+													</Panel>
+												</l:BlockLayoutCell>
+												<l:BlockLayoutCell id="Accent1.1" width="2">
+													<FlexBox alignItems="Start" width="100%">
+														<items>
+															<Label text="Nº de Novedad" width="110px" class="CustomLabel">
+																<layoutData>
+																	<FlexItemData growFactor="3"/>
+																</layoutData>
+															</Label>
+															<Input id="BNovedad" width="110px" submit="onSearchNovedad" value="{UtilsJsonModel>/nroNovedad}">
+																<layoutData>
+																	<FlexItemData growFactor="3"/>
+																</layoutData>
+															</Input>
+															<Button icon="sap-icon://search" type="Emphasized" press="openDialogNovedades" class="buttonInverted">
+																<layoutData>
+																	<FlexItemData growFactor="4"/>
+																</layoutData>
+															</Button>
+															<Label text="Referencia" width="80px" class="CustomLabel">
+																<layoutData>
+																	<FlexItemData growFactor="1"/>
+																</layoutData>
+															</Label>
+															<Input id="BRef" value="{UtilsJsonModel>/Referencia}" enabled="false">
+																<layoutData>
+																	<FlexItemData growFactor="1"/>
+																</layoutData>
+															</Input>
+														</items>
+													</FlexBox>
+													<html:hr class="thinHR"></html:hr>
+													<FlexBox alignItems="Start" width="100%">
+														<items>
+															<Label text="Motivo" width="110px" class="CustomLabel">
+																<layoutData>
+																	<FlexItemData growFactor="1"/>
+																</layoutData>
+															</Label>
+															<ComboBox change="onChangeMotivo" valueState="{NovedadesFormJsonModel>/CodMotivoState}" editable="{UserDataModel>/oVisualizador}"
+																valueStateText="{NovedadesFormJsonModel>/CodMotivoStateMessage}" items="{ path: 'MotivosJsonModel>/Motivos'}" width="80px"
+																selectedKey="{NovedadesFormJsonModel>/CodMotivo}" app:inputId="NMotivo">
+																<core:Item key="{MotivosJsonModel>CodigoMotivo}" text="{MotivosJsonModel>CodigoMotivo}"/>
+																<layoutData>
+																	<FlexItemData growFactor="1"/>
+																</layoutData>
+															</ComboBox>
+															<ComboBox change="onChangeMotivo" valueState="{NovedadesFormJsonModel>/CodMotivoState}" editable="{UserDataModel>/oVisualizador}"
+																valueStateText="{NovedadesFormJsonModel>/CodMotivoStateMessage}" selectedKey="{NovedadesFormJsonModel>/CodMotivo}"
+																items="{ path: 'MotivosJsonModel>/Motivos'}" width="100%" app:inputId="NMotivo">
+																<core:Item key="{MotivosJsonModel>CodigoMotivo}" text="{MotivosJsonModel>DescMotivo}"/>
+																<layoutData>
+																	<FlexItemData growFactor="10"/>
+																</layoutData>
+															</ComboBox>
+														</items>
+													</FlexBox>
+													<FlexBox alignItems="Start" width="100%">
+														<items>
+															<Label text="Estado de Tiem." width="110px" class="CustomLabel">
+																<layoutData>
+																	<FlexItemData growFactor="1"/>
+																</layoutData>
+															</Label>
+															<ComboBox valueState="{NovedadesFormJsonModel>/CodWeatherState}" valueStateText="{NovedadesFormJsonModel>/CodWeatherStateMessage}"
+																editable="{UserDataModel>/oVisualizador}"
+																items="{ path : 'TransenerOperaciones>/FixedValuesSet', filters : [ { path : 'Tabname', operator : 'EQ', value1 : 'ZTAP_OP_NS_GRAL'}, { path : 'Fieldname', operator : 'EQ', value1 : 'COD_WEATHER'} ] }"
+																width="80px" selectedKey="{NovedadesFormJsonModel>/CodWeather}" app:inputId="NEstTiempo">
+																<core:Item key="{TransenerOperaciones>Valkey}" text="{TransenerOperaciones>Valkey}"/>
+																<layoutData>
+																	<FlexItemData growFactor="1"/>
+																</layoutData>
+															</ComboBox>
+															<ComboBox valueState="{NovedadesFormJsonModel>/CodWeatherState}" valueStateText="{NovedadesFormJsonModel>/CodWeatherStateMessage}"
+																editable="{UserDataModel>/oVisualizador}" selectedKey="{NovedadesFormJsonModel>/CodWeather}"
+																items="{ path : 'TransenerOperaciones>/FixedValuesSet', filters : [ { path : 'Tabname', operator : 'EQ', value1 : 'ZTAP_OP_NS_GRAL'}, { path : 'Fieldname', operator : 'EQ', value1 : 'COD_WEATHER'} ] }"
+																width="100%" app:inputId="NEstTiempo">
+																<core:Item key="{TransenerOperaciones>Valkey}" text="{TransenerOperaciones>Valtext}"/>
+																<layoutData>
+																	<FlexItemData growFactor="10"/>
+																</layoutData>
+															</ComboBox>
+														</items>
+													</FlexBox>
+													<FlexBox alignItems="Start" width="100%">
+														<items>
+															<Label text="Disp. Actuante" width="110px" class="CustomLabel">
+																<layoutData>
+																	<FlexItemData growFactor="1"/>
+																</layoutData>
+															</Label>
+															<ComboBox valueState="{NovedadesFormJsonModel>/CodDispActState}" valueStateText="{NovedadesFormJsonModel>/CodDispActStateMessage}"
+																editable="{UserDataModel>/oVisualizador}" id="comboboxDispAct"
+																items="{ path : 'TransenerOperaciones>/FixedValuesSet', filters : [ { path : 'Tabname', operator : 'EQ', value1 : 'ZTAP_OP_NS_GRAL'}, { path : 'Fieldname', operator : 'EQ', value1 : 'COD_DISP_ACT'} ] }"
+																width="80px" selectedKey="{NovedadesFormJsonModel>/CodDispAct}" app:inputId="NActuante">
+																<core:Item key="{TransenerOperaciones>Valkey}" text="{TransenerOperaciones>Valkey}"/>
+																<layoutData>
+																	<FlexItemData growFactor="1"/>
+																</layoutData>
+															</ComboBox>
+															<ComboBox valueState="{NovedadesFormJsonModel>/CodDispActState}" valueStateText="{NovedadesFormJsonModel>/CodDispActStateMessage}"
+																editable="{UserDataModel>/oVisualizador}" selectedKey="{NovedadesFormJsonModel>/CodDispAct}"
+																items="{ path : 'TransenerOperaciones>/FixedValuesSet', filters : [ { path : 'Tabname', operator : 'EQ', value1 : 'ZTAP_OP_NS_GRAL'}, { path : 'Fieldname', operator : 'EQ', value1 : 'COD_DISP_ACT'} ] }"
+																width="100%" app:inputId="NActuante">
+																<core:Item key="{TransenerOperaciones>Valkey}" text="{TransenerOperaciones>Valtext}"/>
+																<layoutData>
+																	<FlexItemData growFactor="10"/>
+																</layoutData>
+															</ComboBox>
+														</items>
+													</FlexBox>
+													<FlexBox alignItems="Start" width="100%">
+														<items>
+															<Label text="Area Respons." width="110px" class="CustomLabel">
+																<layoutData>
+																	<FlexItemData growFactor="1"/>
+																</layoutData>
+															</Label>
+															<ComboBox valueState="{NovedadesFormJsonModel>/CodAreaRespState}" valueStateText="{NovedadesFormJsonModel>/CodAreaRespStateMessage}"
+																editable="{UserDataModel>/oVisualizador}"
+																items="{ path : 'TransenerOperaciones>/FixedValuesSet', filters : [ { path : 'Tabname', operator : 'EQ', value1 : 'ZTAP_OP_NS_GRAL'}, { path : 'Fieldname', operator : 'EQ', value1 : 'COD_AREA_RESP'} ] }"
+																width="80px" selectedKey="{NovedadesFormJsonModel>/CodAreaResp}" app:inputId="NRespons">
+																<core:Item key="{TransenerOperaciones>Valkey}" text="{TransenerOperaciones>Valkey}"/>
+																<layoutData>
+																	<FlexItemData growFactor="1"/>
+																</layoutData>
+															</ComboBox>
+															<ComboBox valueState="{NovedadesFormJsonModel>/CodAreaRespState}" valueStateText="{NovedadesFormJsonModel>/CodAreaRespStateMessage}"
+																editable="{UserDataModel>/oVisualizador}" selectedKey="{NovedadesFormJsonModel>/CodAreaResp}"
+																items="{ path : 'TransenerOperaciones>/FixedValuesSet', filters : [ { path : 'Tabname', operator : 'EQ', value1 : 'ZTAP_OP_NS_GRAL'}, { path : 'Fieldname', operator : 'EQ', value1 : 'COD_AREA_RESP'} ] }"
+																width="100%" app:inputId="NRespons">
+																<core:Item key="{TransenerOperaciones>Valkey}" text="{TransenerOperaciones>Valtext}"/>
+																<layoutData>
+																	<FlexItemData growFactor="10"/>
+																</layoutData>
+															</ComboBox>
+														</items>
+													</FlexBox>
+													<FlexBox alignItems="Start" width="100%">
+														<items>
+															<Label text="Causa" width="110px" class="CustomLabel">
+																<layoutData>
+																	<FlexItemData growFactor="1"/>
+																</layoutData>
+															</Label>
+															<ComboBox valueState="{NovedadesFormJsonModel>/CodCausaState}" valueStateText="{NovedadesFormJsonModel>/CodCausaStateMessage}"
+																editable="{UserDataModel>/oVisualizador}" items="{CausasJsonModel>/Causas}" width="80px" selectedKey="{NovedadesFormJsonModel>/CodCausa}"
+																app:inputId="NCausa" change="causaChanged">
+																<core:Item key="{CausasJsonModel>CodigoCausa}" text="{CausasJsonModel>CodigoCausa}"/>
+																<layoutData>
+																	<FlexItemData growFactor="1"/>
+																</layoutData>
+															</ComboBox>
+															<ComboBox valueState="{NovedadesFormJsonModel>/CodCausaState}" valueStateText="{NovedadesFormJsonModel>/CodCausaStateMessage}"
+																change="causaChanged" editable="{UserDataModel>/oVisualizador}" selectedKey="{NovedadesFormJsonModel>/CodCausa}"
+																items="{CausasJsonModel>/Causas}" width="100%" app:inputId="NCausa">
+																<core:Item key="{CausasJsonModel>CodigoCausa}" text="{CausasJsonModel>DescCausa}"/>
+																<layoutData>
+																	<FlexItemData growFactor="10"/>
+																</layoutData>
+															</ComboBox>
+														</items>
+													</FlexBox>
+													<FlexBox alignItems="Start" width="100%">
+														<items>
+															<Label text="Tipificación Falla" width="110px" class="CustomLabel">
+																<layoutData>
+																	<FlexItemData growFactor="1"/>
+																</layoutData>
+															</Label>
+															<ComboBox valueState="{NovedadesFormJsonModel>/CodTipFallaState}" valueStateText="{NovedadesFormJsonModel>/CodTipFallaStateMessage}"
+																editable="{UserDataModel>/oVisualizador}" items="{TipificacionesFallas>/TipificacionesFallas}" width="80px"
+																selectedKey="{NovedadesFormJsonModel>/CodTipFalla}" app:inputId="NTFalla">
+																<core:Item key="{TipificacionesFallas>Valkey}" text="{TipificacionesFallas>Valkey}"/>
+																<layoutData>
+																	<FlexItemData growFactor="1"/>
+																</layoutData>
+															</ComboBox>
+															<ComboBox valueState="{NovedadesFormJsonModel>/CodTipFallaState}" valueStateText="{NovedadesFormJsonModel>/CodTipFallaStateMessage}"
+																editable="{UserDataModel>/oVisualizador}" selectedKey="{NovedadesFormJsonModel>/CodTipFalla}"
+																items="{TipificacionesFallas>/TipificacionesFallas}" width="100%" app:inputId="NTFalla">
+																<core:Item key="{TipificacionesFallas>Valkey}" text="{TipificacionesFallas>Valtext}"/>
+																<layoutData>
+																	<FlexItemData growFactor="10"/>
+																</layoutData>
+															</ComboBox>
+														</items>
+													</FlexBox>
+													<FlexBox alignItems="Start" width="100%">
+														<items>
+															<Label text="Ubicación Falla" width="110px" class="CustomLabel">
+																<layoutData>
+																	<FlexItemData growFactor="1"/>
+																</layoutData>
+															</Label>
+															<Input valueState="{NovedadesFormJsonModel>/CodUbFallaState}" valueStateText="{NovedadesFormJsonModel>/CodUbFallaStateMessage}"
+																editable="{UserDataModel>/oVisualizador}" class="sapUiTinyMarginBegin" width="445px" value="{NovedadesFormJsonModel>/CodUbFalla}"
+																app:inputId="NUFalla">
+																<layoutData>
+																	<FlexItemData growFactor="1"/>
+																</layoutData>
+															</Input>
+														</items>
+													</FlexBox>
+												</l:BlockLayoutCell>
+											</l:BlockLayoutRow>
+											<l:BlockLayoutRow accentCells="Block1">
+												<l:BlockLayoutCell id="Accent2" width="2">
+													<CheckBox text="Generó Indisponibilidad" selected="{NovedadesFormJsonModel>/GenIndisponibilidad}" editable="{UserDataModel>/oVisualizador}"
+														select="genIndisponibilidadChanged"></CheckBox>
+													<!--<Text text="Generó Indisponibilidad" class="labelEdit" width="70%"/>-->
+													<!--<RadioButtonGroup columns="2" width="100%" select="genIndisponibilidadChanged" editable="{UserDataModel>/oVisualizador}"
+														valueState="{NovedadesFormJsonModel>/GenIndisponibilidadState}"
+														selectedIndex="{ parts: [ 'NovedadesFormJsonModel>/GenIndisponibilidad' ], formatter: '.formatRadioDisp' }">
+														< TODO revisar los otros values de aca en adelante>
+														<buttons>
+															<RadioButton id="RB-1" text="SI" app:value="true"/>
+															<RadioButton id="RB-2" text="NO" app:value="false"/>
+														</buttons>
+													</RadioButtonGroup>-->
+													<html:hr class="thinHR"></html:hr>
+													<CheckBox text="Hubo Recierre" selected="{NovedadesFormJsonModel>/Recierre}" width="100%" editable="{UserDataModel>/oVisualizador}"
+														select="recierreChanged"/>
+												</l:BlockLayoutCell>
+												<l:BlockLayoutCell id="Accent3" width="3">
+													<FlexBox alignItems="Start" width="100%">
+														<items>
+															<Label text="Ent. Disponibilidad" width="150px" class="CustomLabel"/>
+															<DateTimePicker valueState="{NovedadesFormJsonModel>/EntDispoState}"
+																editable="{= ${UserDataModel>/oVisualizador} &amp;&amp; ${UtilsJsonModel>/editableDate}}" enabled="{UtilsJsonModel>/editableDate}"
+																dateValue="{NovedadesFormJsonModel>/EntDispo}" id="DP3" displayFormat="dd/MM/yy HH:mm" change="handleChangeEntIndis"
+																class="sapUiSmallMarginBottom" minDate="{NovedadesFormJsonModel>/EntIndis}" maxDate="{UserDataModel>/DateNow}" initialFocusedDateValue="{UserDataModel>/DateNow}"/>
+														</items>
+													</FlexBox>
+													<FlexBox alignItems="Start" width="100%">
+														<items>
+															<Label text="Ent. en Servicio" width="150px" class="CustomLabel"/>
+															<DateTimePicker valueState="{NovedadesFormJsonModel>/EntServicioState}"
+																editable="{= ${UserDataModel>/oVisualizador} &amp;&amp; ${UtilsJsonModel>/editableDate}}" enabled="{UtilsJsonModel>/editableDate}"
+																dateValue="{NovedadesFormJsonModel>/EntServicio}" id="DP4" displayFormat="dd/MM/yy HH:mm" change="handleChange"
+																class="sapUiSmallMarginBottom" minDate="{NovedadesFormJsonModel>/EntDispo}" maxDate="{UserDataModel>/DateNow}" initialFocusedDateValue="{UserDataModel>/DateNow}"/>
+														</items>
+													</FlexBox>
+												</l:BlockLayoutCell>
+												<l:BlockLayoutCell id="Accent4" width="3">
+													<Text text="Tipo de Perturbación" width="100%"/>
+													<FlexBox alignItems="Start" width="100%">
+														<items>
+															<HBox>
+																<items>
+																	<RadioButtonGroup select="tipoPerturbacionChanged" enabled="{UtilsJsonModel>/enabledRadio}" editable="{UserDataModel>/oVisualizador}"
+																		selectedIndex="{ parts: [ 'NovedadesFormJsonModel>/TipoPerturbacion' ], formatter: '.formatRadioPert' }">
+																		<buttons>
+																			<RadioButton id="RB1-1" text="Caídas de Torres/Vanos" app:value="C"/>
+																			<RadioButton id="RB1-2" text="Puesta a Tierra de Conductores" app:value="P"/>
+																			<RadioButton id="RB1-3" text="Rotura de Cadena de Aisladores" app:value="T"/>
+																		</buttons>
+																	</RadioButtonGroup>
+																	<Input enabled="{UtilsJsonModel>/enabledCaidas}" editable="{UserDataModel>/oVisualizador}" type="Number"
+																		value="{NovedadesFormJsonModel>/Cantidadtorrescaidas}" width="70px"></Input>
+																</items>
+															</HBox>
+														</items>
+													</FlexBox>
+												</l:BlockLayoutCell>
+											</l:BlockLayoutRow>
+											<l:BlockLayoutRow accentCells="Block2">
+												<l:BlockLayoutCell id="Accent7">
+													<!--<Text text="Tipo de Perturbación" width="100%"/>-->
+													<FlexBox alignItems="Start" width="100%" visible="{UserDataModel>/oVisualizador}">
+														<items>
+															<Label text="Año" width="50px" class="CustomLabel"/>
+															<Input id="Iyear" width="60px" value="{NovedadesFormJsonModel>/Anio}" editable="{UserDataModel>/oVisualizador}"
+																valueState="{NovedadesFormJsonModel>/AnioState}" valueStateText="{NovedadesFormJsonModel>/AnioStateMessage}"/>
+															<Label text="LT" width="30px" class="CustomLabel CustomMargin"/>
+															<Input id="Ilt" value="{LTFormJsonModel>/IdLicencia}" submit="cargarLT" maxLength="10" width="200px"
+																editable="{UserDataModel>/oVisualizador}"/>
+															<!--<MultiComboBox selectedKeys="{/CodEquipo}" selectionChange="handleSelectionChange" selectionFinish="handleSelectionFinish" width="290px"-->
+															<!--	class="CustomMargin" items="{ path: 'Equipos>/Equipos'}">-->
+															<!--	<core:Item key="{Equipos>CodigoEquipo}" text="{Equipos>DescEquipo}"/>-->
+															<!--</MultiComboBox>-->
+															<Button icon="sap-icon://add" press="cargarLT"></Button>
+														</items>
+													</FlexBox>
+												</l:BlockLayoutCell>
+												<l:BlockLayoutCell id="Accent8">
+													<FlexBox alignItems="Start" width="100%">
+														<Table items="{LicencesListJsonModel>/Licences}" busy="{LicencesListJsonModel>/Busy}">
+															<columns>
+																<Column>
+																	<!--width="5rem"-->
+																	<Text text="Año"/>
+																</Column>
+																<Column>
+																	<Text text="N°"/>
+																</Column>
+																<Column>
+																	<Text text=""/>
+																</Column>
+															</columns>
+															<items>
+																<ColumnListItem vAlign="Middle">
+																	<cells>
+																		<Text text="{LicencesListJsonModel>Anio}" wrapping="false"/>
+																		<Text text="{LicencesListJsonModel>IdLicencia}" wrapping="false"/>
+																		<Button icon="sap-icon://delete" press="deleteLicence" visible="{UserDataModel>/oVisualizador}" class="buttonInverted"/>
+																	</cells>
+																</ColumnListItem>
+															</items>
+														</Table>
+													</FlexBox>
+												</l:BlockLayoutCell>
+											</l:BlockLayoutRow>
+										</l:BlockLayout>
+									</l:VerticalLayout>
+								</ScrollContainer>
+							</IconTabFilter>
+							<IconTabFilter text="Consecuentes" key="2">
+								<customData>
+									<core:CustomData key="id" value="CONSECUENTES"/>
+								</customData>
+								<!--<ScrollContainer vertical="true" height="100%" horizontal="false" >-->
+								<ScrollContainer vertical="true" width="100%" height="100%">
+									<!--<IconTabBar id="iconTabBarNoIcons" expandable="false" select="handleTabsConsecuentes"-->
+									<!--	selectedKey="{UtilsJsonModel>/SelectedConsecuentesKeyTab}">-->
+							
+							<IconTabBar id="iconTabBarNoIcons" expandable="false" select="handleTabsConsecuentes" selectedKey="{UtilsJsonModel>/SelectedConsecuentesKeyTab}"> 
+							<!--<IconTabBar stretchContentHeight="true" applyContentPadding="false" id="iconTabBarNoIcons" expandable="false" select="handleTabsConsecuentes" selectedKey="{UtilsJsonModel>/SelectedConsecuentesKeyTab}">			-->
+										<items>
+											<IconTabFilter text="Datos Generales" key="1">
+												<customData>
+													<core:CustomData key="id" value="DG"/>
+												</customData>
+												<HBox justifyContent="SpaceAround" class="form form-prueba">
+													<VBox width="55%">
+														<FlexBox alignItems="Start" width="100%">
+															<items>
+																<Label text="Tipo" width="90px" class="CustomLabel">
+																	<layoutData>
+																		<FlexItemData growFactor="1"/>
+																	</layoutData>
+																</Label>
+																<ComboBox items="{TipoEquipoJsonModel>/TipoEquipo}" class="sapUiTinyMarginEnd" editable="{UserDataModel>/oVisualizador}"
+																	change="handleTypeChange" width="180px" valueState="{ConsecuentesFormJsonModel>/CodTipoState}"
+																	valueStateText="{ConsecuentesFormJsonModel>/CodTipoStateMessage}" selectedKey="{ConsecuentesFormJsonModel>/CodTipo}" app:inputId="NTipo">
+																	<core:Item key="{TipoEquipoJsonModel>Tipo}" text="{TipoEquipoJsonModel>Tipo}"/>
+																</ComboBox>
+																<ComboBox items="{TipoEquipoJsonModel>/TipoEquipo}" class="sapUiSmallMarginEnd" editable="{UserDataModel>/oVisualizador}"
+																	change="handleTypeChange" width="340px" valueState="{ConsecuentesFormJsonModel>/CodTipoState}"
+																	valueStateText="{ConsecuentesFormJsonModel>/CodTipoStateMessage}" selectedKey="{ConsecuentesFormJsonModel>/CodTipo}" app:inputId="NTipo">
+																	<core:Item key="{TipoEquipoJsonModel>Tipo}" text="{TipoEquipoJsonModel>Descripcion}"/>
+																</ComboBox>
+															</items>
+														</FlexBox>
+														<FlexBox alignItems="Start" width="100%">
+															<items>
+																<Label text="Ubicación" width="90px" class="CustomLabel">
+																	<layoutData>
+																		<FlexItemData growFactor="1"/>
+																	</layoutData>
+																</Label>
+																<ComboBox enabled="{parts: ['ConsecuentesFormJsonModel>/CodTipo'], formatter: '.isUbicacionEditableConsecuentes'}"
+																	editable="{UserDataModel>/oVisualizador}" change="changeUbicacionConsecuentes" class="sapUiTinyMarginEnd"
+																	items="{EstacionesJsonModel>/Estaciones}" width="180px" valueState="{ConsecuentesFormJsonModel>/TplnrState}"
+																	valueStateText="{ConsecuentesFormJsonModel>/TplnrStateMessage}" selectedKey="{ConsecuentesFormJsonModel>/Tplnr}" app:inputId="NTipo">
+																	<core:Item key="{EstacionesJsonModel>Codigo}" text="{EstacionesJsonModel>Codigo}"/>
+																</ComboBox>
+																<ComboBox enabled="{parts: ['ConsecuentesFormJsonModel>/CodTipo'], formatter: '.isUbicacionEditableConsecuentes'}"
+																	editable="{UserDataModel>/oVisualizador}" items="{EstacionesJsonModel>/Estaciones}" class="sapUiSmallMarginEnd"
+																	change="changeUbicacionConsecuentes" width="340px" valueState="{ConsecuentesFormJsonModel>/TplnrState}"
+																	valueStateText="{ConsecuentesFormJsonModel>/TplnrStateMessage}" selectedKey="{ConsecuentesFormJsonModel>/Tplnr}" app:inputId="IUbic">
+																	<core:Item key="{EstacionesJsonModel>Codigo}" text="{EstacionesJsonModel>Descripcion}"/>
+																</ComboBox>
+															</items>
+														</FlexBox>
+														<FlexBox alignItems="Start" width="100%">
+															<items>
+																<Label text="Equipo" width="90px" class="CustomLabel">
+																	<layoutData>
+																		<FlexItemData growFactor="1"/>
+																	</layoutData>
+																</Label>
+																<ComboBox change="handleEquipmentChange" class="sapUiTinyMarginEnd" items="{ path: 'EquiposConsecuentesJsonModel>/Equipos'}" width="180px"
+																	editable="{UserDataModel>/oVisualizador}" valueState="{ConsecuentesFormJsonModel>/EqunrState}"
+																	valueStateText="{ConsecuentesFormJsonModel>/EqunrStateMessage}" selectedKey="{ConsecuentesFormJsonModel>/Equnr}" app:inputId="NTipo">
+																	<core:Item key="{EquiposConsecuentesJsonModel>Codigo}" text="{EquiposConsecuentesJsonModel>Codigo}"/>
+																</ComboBox>
+																<ComboBox change="handleEquipmentChange" class="sapUiSmallMarginEnd" items="{ path: 'EquiposConsecuentesJsonModel>/Equipos'}" width="340px"
+																	editable="{UserDataModel>/oVisualizador}" valueState="{ConsecuentesFormJsonModel>/EqunrState}"
+																	valueStateText="{ConsecuentesFormJsonModel>/EqunrStateMessage}" selectedKey="{ConsecuentesFormJsonModel>/Equnr}" app:inputId="CEquipo">
+																	<core:Item key="{EquiposConsecuentesJsonModel>Codigo}" text="{EquiposConsecuentesJsonModel>Descripcion}"/>
+																</ComboBox>
+															</items>
+														</FlexBox>
+														<FlexBox alignItems="Start" width="100%">
+															<items>
+																<Label text="Inicio Novedad" width="150px" class="CustomLabel"/>
+																<DateTimePicker dateValue="{ConsecuentesFormJsonModel>/InicioNove}" valueState="{ConsecuentesFormJsonModel>/InicioNoveState}"
+																	change="inicioNoveConsecuenteChanged" valueStateText="{ConsecuentesFormJsonModel>/InicioNoveStateMessage}" displayFormat="dd/MM/yy HH:mm"
+																	maxDate="{UserDataModel>/DateNow}" initialFocusedDateValue="{UserDataModel>/DateNow}"/>
+															</items>
+														</FlexBox>
+														<FlexBox alignItems="Start" width="100%">
+															<items>
+																<Label text="Indisponible Desde" width="150px" class="CustomLabel"/>
+																<DateTimePicker dateValue="{ConsecuentesFormJsonModel>/EntIndis}" valueState="{ConsecuentesFormJsonModel>/EntIndisState}"
+																	editable="{UserDataModel>/oVisualizador}" valueStateText="{ConsecuentesFormJsonModel>/EntIndisStateMessage}" displayFormat="dd/MM/yy HH:mm"
+																	change="handleChangeIndisConsecuentes" maxDate="{UserDataModel>/DateNow}" initialFocusedDateValue="{UserDataModel>/DateNow}"/>
+															</items>
+														</FlexBox>
+													</VBox>
+													<VBox width="45%">
+														<FlexBox alignItems="Start" width="100%">
+															<items>
+																<Label text="Disp. Actuante" width="110px" class="CustomLabel">
+																	<layoutData>
+																		<FlexItemData growFactor="1"/>
+																	</layoutData>
+																</Label>
+																<ComboBox change="handleDispActuante" items="{ path: 'TransenerOperaciones>/DispActuantesSet'}" width="80px"
+																	editable="{UserDataModel>/oVisualizador}" valueState="{ConsecuentesFormJsonModel>/CodDispActState}"
+																	valueStateText="{ConsecuentesFormJsonModel>/CodDispActStateMessage}" selectedKey="{ConsecuentesFormJsonModel>/CodDispAct}"
+																	app:inputId="NMotivo">
+																	<core:Item key="{TransenerOperaciones>CodigoDispAct}" text="{TransenerOperaciones>CodigoDispAct}"/>
+																	<layoutData>
+																		<FlexItemData growFactor="1"/>
+																	</layoutData>
+																</ComboBox>
+																<ComboBox change="handleDispActuante" selectedKey="{ConsecuentesFormJsonModel>/CodDispAct}" editable="{UserDataModel>/oVisualizador}"
+																	valueState="{ConsecuentesFormJsonModel>/CodDispActState}" valueStateText="{ConsecuentesFormJsonModel>/CodDispActStateMessage}"
+																	items="{ path: 'TransenerOperaciones>/DispActuantesSet'}" width="100%" app:inputId="NActuante2">
+																	<core:Item key="{TransenerOperaciones>CodigoDispAct}" text="{TransenerOperaciones>DescDispAct}"/>
+																	<layoutData>
+																		<FlexItemData growFactor="10"/>
+																	</layoutData>
+																</ComboBox>
+															</items>
+														</FlexBox>
+														<html:hr class="thinHR"></html:hr>
+														<FlexBox alignItems="Start" justifyContent="SpaceBetween" width="100%">
+															<items>
+																<Text text="Generó Indisponibilidad" width="100%"/>
+																<CheckBox selected="{ConsecuentesFormJsonModel>/GenIndisponibilidad}" editable="{UserDataModel>/oVisualizador}"></CheckBox>
+																<!--<RadioButtonGroup columns="2" width="100%" select="genIndisponibilidadChangedConsecuentes" editable="{UserDataModel>/oVisualizador}"
+																	valueState="{ConsecuentesFormJsonModel>/GenIndisponibilidadState}"
+																	selectedIndex="{ parts: [ 'ConsecuentesFormJsonModel>/GenIndisponibilidad' ], formatter: '.formatRadioDisp' }">
+																	< TODO revisar los otros values de aca en adelante>
+																	<buttons>
+																		<RadioButton id="RBG-1" text="SI" app:value="true"/>
+																		<RadioButton id="RBG-2" text="NO" app:value="false"/>
+																	</buttons>
+																</RadioButtonGroup>-->
+																<CheckBox text="Vinc. Sin Tensión" selected="{ConsecuentesFormJsonModel>/Vinculadost}" editable="{UserDataModel>/oVisualizador}"
+																	select="vinculadoChanged"/>
+															</items>
+														</FlexBox>
+														<html:hr class="thinHR"></html:hr>
+														<FlexBox alignItems="Start" width="100%">
+															<items>
+																<Label text="Ent. Disponibilidad" width="150px" class="CustomLabel"/>
+																<DateTimePicker dateValue="{ConsecuentesFormJsonModel>/EntDispo}" editable="{UserDataModel>/oVisualizador}"
+																	maxDate="{UserDataModel>/DateNow}" initialFocusedDateValue="{UserDataModel>/DateNow}" change="onHandleChangeEntIndisConse" minDate="{ConsecuentesFormJsonModel>/EntIndis}"
+																	displayFormat="dd/MM/yy HH:mm"/>
+															</items>
+														</FlexBox>
+														<FlexBox alignItems="Start" width="100%">
+															<items>
+																<Label text="Ent. en Servicio" width="150px" class="CustomLabel"/>
+																<DateTimePicker dateValue="{ConsecuentesFormJsonModel>/EntServicio}" editable="{UserDataModel>/oVisualizador}"
+																	maxDate="{UserDataModel>/DateNow}" initialFocusedDateValue="{UserDataModel>/DateNow}" minDate="{ConsecuentesFormJsonModel>/EntDispo}" displayFormat="dd/MM/yy HH:mm"/>
+															</items>
+														</FlexBox>
+													</VBox>
+												</HBox>
+											</IconTabFilter>
+											<IconTabFilter text="Informe CAMMESA" key="2">
+												<customData>
+													<core:CustomData key="id" value="IC"/>
+												</customData>
+												<FlexBox alignItems="Start" width="100%" class="form">
+													<items>
+														<HBox alignItems="Start" justifyContent="SpaceBetween" width="100%">
+															<items>
+																<VBox>
+																	<Label text="Fecha y hora"></Label>
+																	<DateTimePicker valueState="{ConsecuentesFormJsonModel>/FechaHoraState}" dateValue="{ConsecuentesFormJsonModel>/FechaHora}"
+																		editable="{UserDataModel>/oVisualizador}" displayFormat="dd/MM/yy HH:mm" change="handleChange" class="sapUiSmallMarginBottom"
+																		maxDate="{UserDataModel>/DateNow}" initialFocusedDateValue="{UserDataModel>/DateNow}"/>
+																</VBox>
+																<VBox>
+																	<Text text="Autoriza" class="CustomLabel"></Text>
+																	<CheckBox selected="{ConsecuentesFormJsonModel>/Autoriza}" editable="true"></CheckBox>
+																	<!--<RadioButtonGroup columns="2" width="100%" select="selectAutorizaConsecuentes" valueState="{ConsecuentesFormJsonModel>/AutorizaState}"
+																		editable="{UserDataModel>/oVisualizador}"
+																		selectedIndex="{ parts: [ 'ConsecuentesFormJsonModel>/Autoriza' ], formatter: '.formatRadioComments' }">
+																		<buttons>
+																			<RadioButton text="SI" app:value="S"/>
+																			<RadioButton text="NO" app:value="N"/>
+																		</buttons>
+																	</RadioButtonGroup>-->
+																</VBox>
+																<VBox>
+																	<Text text="Informa CAMMESA" class="CustomLabel"></Text>
+																	<CheckBox selected="{ConsecuentesFormJsonModel>/InformaCammesa}" editable="true"></CheckBox>
+																	<!--<RadioButtonGroup columns="2" width="100%" select="selectInformeCammesaConsecuentes" editable="{UserDataModel>/oVisualizador}"
+																		valueState="{ConsecuentesFormJsonModel>/InformaCammesaState}"
+																		selectedIndex="{ parts: [ 'ConsecuentesFormJsonModel>/InformaCammesa' ], formatter: '.formatRadioComments' }">
+																		<buttons>
+																			<RadioButton text="SI" app:value="S"/>
+																			<RadioButton text="NO" app:value="N"/>
+																		</buttons>
+																	</RadioButtonGroup>-->
+																</VBox>
+															</items>
+														</HBox>
+													</items>
+												</FlexBox>
+												<VBox alignContent="Center" class="form">
+													<items>
+														<Label text="Informe a CAMMESA" width="150px" class="CustomLabel"/>
+														<TextArea width="100%" height="144px" value="{ConsecuentesFormJsonModel>/Texto}" editable="{UserDataModel>/oVisualizador}"></TextArea>
+													</items>
+												</VBox>
+											</IconTabFilter>
+											<IconTabFilter text="Comentarios" key="3">
+												<customData>
+													<core:CustomData key="id" value="C"/>
+												</customData>
+												<TextArea width="100%" height="242px" value="{ConsecuentesFormJsonModel>/Comentario}" editable="{UserDataModel>/oVisualizador}"></TextArea>
+											</IconTabFilter>
+										</items>
+									</IconTabBar>
+									<Panel class="formFooter" visible="{UserDataModel>/oVisualizador}">
+										<Button icon="sap-icon://document" text="Nuevo" class="buttonInverted" press="cleanConsecuente"/>
+										<Button icon="sap-icon://add" text="Guardar" type="Emphasized" class="floatRight buttonInverted" press="consecuenteAddPress"/>
+									</Panel>
+									<html:hr class="thinHR"></html:hr>
+									<Table noDataText="No hay datos" items="{ConsequentListJsonModel>/Consequents}" class="panelPrueba">
+										<columns>
+											<Column width="5rem">
+												<Text text="Tipo"/>
+											</Column>
+											<Column width="5rem">
+												<Text text="Equipo"/>
+											</Column>
+											<Column width="7rem">
+												<Text text="Inicio Novedad"></Text>
+											</Column>
+											<Column width="7rem">
+												<Text text="Indisponible desde"/>
+											</Column>
+											<Column width="7rem">
+												<Text text="Entrada disponibilidad"/>
+											</Column>
+											<Column width="7rem">
+												<Text text="Entrada de Servicio"/>
+											</Column>
+											<Column width="6rem">
+												<Text text="Disp. Actuante"/>
+											</Column>
+											<Column width="2.5rem">
+												<Text text="{= !${UserDataModel>/oVisualizador} ? 'Visualizar' : 'Editar' }"/>
+											</Column>
+											<Column width="1rem" visible="{= ${UtilsJsonModel>/visible}}">
+												<Text text=""/>
+											</Column>
+											<Column width="1rem" visible="{= !${UtilsJsonModel>/visible}}">
+												<Text text=""/>
+											</Column>
+										</columns>
+										<items>
+											<ColumnListItem vAlign="Middle">
+												<cells>
+													<Text text="{ConsequentListJsonModel>CodTipo}" wrapping="false"/>
+													<Text text="{ConsequentListJsonModel>Equnr}" wrapping="false"/>
+													<Text text="{ parts: [ 'ConsequentListJsonModel>InicioNove' ], formatter: '.formatTime' }"/>
+													<Text text="{ parts: [ 'ConsequentListJsonModel>EntIndis' ], formatter: '.formatTime' }" wrapping="false"/>
+													<Text text="{ parts: [ 'ConsequentListJsonModel>EntDispo' ], formatter: '.formatTime' }"/>
+													<Text text="{ parts: [ 'ConsequentListJsonModel>EntServicio' ], formatter: '.formatTime' }" wrapping="false"/>
+													<Text text="{ConsequentListJsonModel>CodDispAct}" wrapping="false"/>
+													<Button icon="{= !${UserDataModel>/oVisualizador} ? 'sap-icon://inspection' : 'sap-icon://edit' }" press="editConsecuenteForm"
+														class="buttonInverted"/>
+													<Button icon="sap-icon://delete" press="deleteConsecuenteFromTable"
+														visible="{= ${UtilsJsonModel>/visible} &amp;&amp; ${UserDataModel>/oVisualizador}}" class="buttonInverted"/>
+													<Button icon="sap-icon://delete" press="deleteConsecuenteCreated"
+														visible="{= !${UtilsJsonModel>/visible} &amp;&amp; ${UserDataModel>/oVisualizador}}" class="buttonInverted"/>
+												</cells>
+											</ColumnListItem>
+										</items>
+									</Table>
+								</ScrollContainer>
+							</IconTabFilter>
+							<IconTabFilter text="Informe a CAMMESA" key="3" enabled="{UtilsJsonModel>/CammesaTab}">
+								<customData>
+									<core:CustomData key="id" value="CAMMESA"/>
+								</customData>
+								<ScrollContainer vertical="true" width="100%" height="100%">
+									<l:VerticalLayout id="containerLayout3" width="100%">
+										<l:BlockLayout id="BlockLayout3" background="Dashboard">
+											<l:BlockLayoutRow accentCells="Block3.2">
+												<l:BlockLayoutCell id="Accent3.2" width="3">
+													<TextArea width="100%" class="heightvh50" showExceededText="false" maxLength="160" value="{CammesaFormJsonModel>/Texto}"
+														editable="{UserDataModel>/oVisualizador}"/>
+													<HBox alignItems="Start" justifyContent="SpaceBetween" width="70%" class="sapUiSmallMarginTop">
+														<items>
+															<VBox>
+																<items>
+																	<Label text="Fecha y hora"></Label>
+																	<DateTimePicker dateValue="{CammesaFormJsonModel>/FechaHora}" editable="{UserDataModel>/oVisualizador}" displayFormat="dd/MM/yy HH:mm"
+																		change="handleChangeConsecCammDate" class="sapUiSmallMarginBottom" maxDate="{UserDataModel>/DateNow}" initialFocusedDateValue="{UserDataModel>/DateNow}"/>
+																</items>
+															</VBox>
+															<VBox>
+																<items>
+																	<Text text="Autoriza"></Text>
+																	<CheckBox selected="{CammesaFormJsonModel>/Autoriza}" editable="true"></CheckBox>
+																	<!--
+																	<RadioButtonGroup columns="2" width="100%" select="selectAutoriza" editable="{UserDataModel>/oVisualizador}"
+																		selectedIndex="{ parts: [ 'CammesaFormJsonModel>/Autoriza' ], formatter: '.formatRadioComments' }">
+																		<buttons>
+																			<RadioButton text="SI" app:value="S"/>
+																			<RadioButton text="NO" app:value="N"/>
+																		</buttons>
+																	</RadioButtonGroup>-->
+																</items>
+															</VBox>
+															<VBox>
+																<items>
+																	<Text text="Informa a CAMMESA"></Text>
+																	<CheckBox selected="{CammesaFormJsonModel>/InformaCammesa}" editable="true" select="informaCammesaSelected"></CheckBox>
+																	<!--<RadioButtonGroup columns="2" width="100%" select="selectInformeCammesa" editable="{UserDataModel>/oVisualizador}"
+																		selectedIndex="{ parts: [ 'CammesaFormJsonModel>/InformaCammesa' ], formatter: '.formatRadioComments' }">
+																		<buttons>
+																			<RadioButton text="SI" app:value="S"/>
+																			<RadioButton text="NO" app:value="N"/>
+																		</buttons>
+																	</RadioButtonGroup>-->
+																</items>
+															</VBox>
+														</items>
+													</HBox>
+												</l:BlockLayoutCell>
+											</l:BlockLayoutRow>
+										</l:BlockLayout>
+									</l:VerticalLayout>
+								</ScrollContainer>
+							</IconTabFilter>
+							<IconTabFilter text="Comentarios" key="4">
+								<customData>
+									<core:CustomData key="id" value="COMENTARIOS"/>
+								</customData>
+								<ScrollContainer vertical="true" width="100%" height="100%">
+									<l:VerticalLayout id="containerLayout2" width="100%">
+										<l:BlockLayout id="BlockLayout2" background="Dashboard">
+											<l:BlockLayoutRow accentCells="Block2.1">
+												<l:BlockLayoutCell id="Accent2.1" width="3">
+													<TextArea width="100%" rows="14" value="{CommentsFormJsonModel>/Comentario}" editable="{UserDataModel>/oVisualizador}"/>
+													<FlexBox alignItems="Start" width="100%" class="CustomFlex">
+														<items>
+															<Label text="Inicio Indisp. por Mantenimiento" width="250px" class="CustomLabel"/>
+															<DateTimePicker dateValue="{CommentsFormJsonModel>/HoraIni}" editable="{UserDataModel>/oVisualizador}" id="DP5"
+																displayFormat="dd/MM/yy HH:mm" change="handleChange" class="sapUiSmallMarginBottom" maxDate="{UserDataModel>/DateNow}" initialFocusedDateValue="{UserDataModel>/DateNow}"/>
+														</items>
+													</FlexBox>
+													<FlexBox alignItems="Start" width="100%" class="CustomFlex">
+														<items>
+															<Label text="Fin Indisp. por Mantenimiento" width="250px" class="CustomLabel"/>
+															<DateTimePicker dateValue="{CommentsFormJsonModel>/HoraFin}" editable="{UserDataModel>/oVisualizador}" displayFormat="dd/MM/yy HH:mm"
+																class="sapUiSmallMarginBottom" maxDate="{UserDataModel>/DateNow}" initialFocusedDateValue="{UserDataModel>/DateNow}"/>
+														</items>
+													</FlexBox>
+												</l:BlockLayoutCell>
+											</l:BlockLayoutRow>
+										</l:BlockLayout>
+									</l:VerticalLayout>
+								</ScrollContainer>
+							</IconTabFilter>
+							<IconTabFilter text="Señalizaciones y Pruebas">
+								<Panel expanded="true" expandable="true" headerText="Señalizaciones">
+									<content>
+										<VBox>
+											<HBox class="form">
+												<items>
+													<Label text="Código de Relación:" width="200px" class="CustomLabel" textAlign="Left"/>
+													<Input id="IRelation" width="90px" value="{SignalsFormJsonModel>/Posicion}" editable="{UserDataModel>/oVisualizador}">
+														<layoutData>
+															<FlexItemData growFactor="1"/>
+														</layoutData>
+													</Input>
+												</items>
+											</HBox>
+											<HBox class="form">
+												<items>
+													<Label text="Señalización:" width="200px" class="CustomLabel" textAlign="Left"/>
+													<Input id="ISignal" value="{SignalsFormJsonModel>/Senializacion}" editable="{UserDataModel>/oVisualizador}">
+														<layoutData>
+															<FlexItemData growFactor="1"/>
+														</layoutData>
+													</Input>
+												</items>
+											</HBox><!--
+											<HBox class="form">
+												<items>
+													<Label text="Texto:" width="200px" class="CustomLabel" textAlign="Left"/>
+													<Input id="ITexto" value="{SignalsFormJsonModel>/Texto}" editable="{UserDataModel>/oVisualizador}">
+														<layoutData>
+															<FlexItemData growFactor="1"/>
+														</layoutData>
+													</Input>
+												</items>
+											</HBox>-->
+											<ScrollContainer vertical="true" width="100%" height="100%" visible="{UserDataModel>/oVisualizador}">
+												<Table width="100%" class="no-padding-header-table">
+													<columns>
+														<Column styleClass="" hAlign="Center">
+															<Text wrapping="false" text="RRPI"/>
+														</Column>
+														<Column>
+															<Text wrapping="false" text="BZ"/>
+														</Column>
+														<Column>
+															<Text wrapping="false" text="PITR"/>
+														</Column>
+														<Column>
+															<Text wrapping="false" text="PIT0"/>
+														</Column>
+														<Column hAlign="Center">
+															<Text text="PIT1"/>
+														</Column>
+														<Column>
+															<Text wrapping="false" text="PILI"/>
+														</Column>
+														<Column width="150px">
+															<Text wrapping="false" text="E.T"/>
+														</Column>
+														<Column width="55px">
+															<Text wrapping="false" text="K.M"/>
+														</Column>
+														<Column>
+															<Text wrapping="false" text="FN"/>
+														</Column>
+														<Column>
+															<Text wrapping="false" text="FR"/>
+														</Column>
+														<Column>
+															<Text wrapping="false" text="FS"/>
+														</Column>
+														<Column>
+															<Text wrapping="false" text="FT"/>
+														</Column>
+														<Column>
+															<Text wrapping="false" text="TX"/>
+														</Column>
+														<Column>
+															<Text wrapping="false" text="RX"/>
+														</Column>
+														<Column>
+															<Text wrapping="false" text="T2"/>
+														</Column>
+														<Column>
+															<Text wrapping="false" text="Ts2"/>
+														</Column>
+														<Column>
+															<Text wrapping="false" text="LI"/>
+														</Column>
+														<Column>
+															<Text wrapping="false" text="RR"/>
+														</Column>
+													</columns>
+													<items>
+														<ColumnListItem>
+															<cells>
+																<CheckBox selected="{PerturbationJsonModel>/Perturbacion/0/Rrpi}"></CheckBox>
+																<CheckBox selected="{PerturbationJsonModel>/Perturbacion/0/Bz}"></CheckBox>
+																<CheckBox selected="{PerturbationJsonModel>/Perturbacion/0/Pitr}"></CheckBox>
+																<CheckBox selected="{PerturbationJsonModel>/Perturbacion/0/Pito}"></CheckBox>
+																<CheckBox selected="{PerturbationJsonModel>/Perturbacion/0/Pit1}"></CheckBox>
+																<CheckBox selected="{PerturbationJsonModel>/Perturbacion/0/Pili}"></CheckBox>
+																<!-- Input enabled="false" value="{PerturbationJsonModel>Et}"></Input -->
+																<ComboBox items="{ path: 'EstacionesJsonModel>/Estaciones'}" selectedKey="{PerturbationJsonModel>/Perturbacion/0/Et}">
+																	<core:Item key="{EstacionesJsonModel>Codigo}" text="{EstacionesJsonModel>Codigo} - {EstacionesJsonModel>Descripcion}"/>
+																</ComboBox>
+																<Input value="{PerturbationJsonModel>/Perturbacion/0/Km}"></Input>
+																<CheckBox selected="{PerturbationJsonModel>/Perturbacion/0/Fn}"></CheckBox>
+																<CheckBox selected="{PerturbationJsonModel>/Perturbacion/0/Fr}"></CheckBox>
+																<CheckBox selected="{PerturbationJsonModel>/Perturbacion/0/Fs}"></CheckBox>
+																<CheckBox selected="{PerturbationJsonModel>/Perturbacion/0/Ft}"></CheckBox>
+																<CheckBox selected="{PerturbationJsonModel>/Perturbacion/0/Tx}"></CheckBox>
+																<CheckBox selected="{PerturbationJsonModel>/Perturbacion/0/Rx}"></CheckBox>
+																<CheckBox selected="{PerturbationJsonModel>/Perturbacion/0/T2}"></CheckBox>
+																<CheckBox selected="{PerturbationJsonModel>/Perturbacion/0/Ts2}"></CheckBox>
+																<CheckBox selected="{PerturbationJsonModel>/Perturbacion/0/Li}"></CheckBox>
+																<CheckBox selected="{PerturbationJsonModel>/Perturbacion/0/Rr}"></CheckBox>
+																<!-- Input enabled="false" value="{PerturbationJsonModel>Et2}"></Input -->
+															</cells>
+														</ColumnListItem>
+														<ColumnListItem>
+															<cells>
+																<HBox/>
+																<HBox/>
+																<HBox/>
+																<HBox/>
+																<HBox/>
+																<HBox/>
+																<ComboBox items="{ path: 'EstacionesJsonModel>/Estaciones'}" selectedKey="{PerturbationJsonModel>/Perturbacion/0/Et2}">
+																	<core:Item key="{EstacionesJsonModel>Codigo}" text="{EstacionesJsonModel>Codigo} - {EstacionesJsonModel>Descripcion}"/>
+																</ComboBox>
+																<Input value="{PerturbationJsonModel>/Perturbacion/0/Km2}"></Input>
+																<CheckBox selected="{PerturbationJsonModel>/Perturbacion/0/Fn2}"></CheckBox>
+																<CheckBox selected="{PerturbationJsonModel>/Perturbacion/0/Fr2}"></CheckBox>
+																<CheckBox selected="{PerturbationJsonModel>/Perturbacion/0/Fs2}"></CheckBox>
+																<CheckBox selected="{PerturbationJsonModel>/Perturbacion/0/Ft2}"></CheckBox>
+																<CheckBox selected="{PerturbationJsonModel>/Perturbacion/0/Tx2}"></CheckBox>
+																<CheckBox selected="{PerturbationJsonModel>/Perturbacion/0/Rx2}"></CheckBox>
+																<CheckBox selected="{PerturbationJsonModel>/Perturbacion/0/T22}"></CheckBox>
+																<CheckBox selected="{PerturbationJsonModel>/Perturbacion/0/Ts22}"></CheckBox>
+																<CheckBox selected="{PerturbationJsonModel>/Perturbacion/0/Li2}"></CheckBox>
+																<CheckBox selected="{PerturbationJsonModel>/Perturbacion/0/Rr2}"></CheckBox>
+															</cells>
+														</ColumnListItem>
+													</items>
+												</Table>
+											</ScrollContainer>
+											<Panel class="formFooter">
+												<Button icon="sap-icon://document" visible="{UserDataModel>/oVisualizador}" text="Nuevo" press="senializacionCleanPress"/>
+												<Button icon="sap-icon://add" visible="{UserDataModel>/oVisualizador}" text="Guardar" type="Emphasized" class="floatRight"
+													press="senializacionAddPress"/>
+											</Panel>
+											<ScrollContainer vertical="true" width="100%" height="100%" id="contPrueba">
+												<Table width="175%" class="sapUiTinyMarginTop" items="{SignalsListJsonModel>/Signals}">
+													<columns>
+														<Column width="100px">
+															<Text text="Cod. Rel."></Text>
+														</Column>
+														<Column width="200px">
+															<Text text="Señalizacion"/>
+														</Column>
+														<!--<Column width="200px">
+															<Text text="Texto"/>
+														</Column>-->
+														<Column>
+															<Text text="RRPI"/>
+														</Column>
+														<Column>
+															<Text text="BZ"/>
+														</Column>
+														<Column>
+															<Text text="PITR"/>
+														</Column>
+														<Column>
+															<Text text="PIT0"/>
+														</Column>
+														<Column>
+															<Text text="PIT1"/>
+														</Column>
+														<Column>
+															<Text text="PILI"/>
+														</Column>
+														<Column>
+															<Text text="E.T"/>
+														</Column>
+														<Column>
+															<Text text="K.M"/>
+														</Column>
+														<Column>
+															<Text text="FN"/>
+														</Column>
+														<Column>
+															<Text text="FR"/>
+														</Column>
+														<Column>
+															<Text text="FS"/>
+														</Column>
+														<Column>
+															<Text text="FT"/>
+														</Column>
+														<Column>
+															<Text text="TX"/>
+														</Column>
+														<Column>
+															<Text text="RX"/>
+														</Column>
+														<Column>
+															<Text text="T2"/>
+														</Column>
+														<Column>
+															<Text text="Ts2"/>
+														</Column>
+														<Column>
+															<Text text="LI"/>
+														</Column>
+														<Column>
+															<Text text="RR"/>
+														</Column>
+														<Column>
+															<Text text="ET"/>
+														</Column>
+														<Column>
+															<Text text="KM"/>
+														</Column>
+														<Column>
+															<Text text="FN"/>
+														</Column>
+														<Column>
+															<Text text="FR"/>
+														</Column>
+														<Column>
+															<Text text="FS"/>
+														</Column>
+														<Column>
+															<Text text="FT"/>
+														</Column>
+														<Column>
+															<Text text="TX"/>
+														</Column>
+														<Column>
+															<Text text="RX"/>
+														</Column>
+														<Column>
+															<Text text="T2"/>
+														</Column>
+														<Column>
+															<Text text="TS2"/>
+														</Column>
+														<Column>
+															<Text text="LI"/>
+														</Column>
+														<Column>
+															<Text text="RR"/>
+														</Column>
+														<Column></Column>
+														<Column></Column>
+													</columns>
+													<items>
+														<ColumnListItem>
+															<cells>
+																<Text text="{SignalsListJsonModel>Posicion}"></Text>
+																<Text text="{SignalsListJsonModel>Senializacion}"></Text>
+																<!--<Text text="{SignalsListJsonModel>Texto}"></Text>-->
+																<Text text="{ parts: [ 'SignalsListJsonModel>Rrpi' ], formatter: '.formatBooleanValues' }"></Text>
+																<Text text="{ parts: [ 'SignalsListJsonModel>Bz' ], formatter: '.formatBooleanValues' }"></Text>
+																<Text text="{ parts: [ 'SignalsListJsonModel>Pitr' ], formatter: '.formatBooleanValues' }"></Text>
+																<Text text="{ parts: [ 'SignalsListJsonModel>Pito' ], formatter: '.formatBooleanValues' }"></Text>
+																<Text text="{ parts: [ 'SignalsListJsonModel>Pit1' ], formatter: '.formatBooleanValues' }"></Text>
+																<Text text="{ parts: [ 'SignalsListJsonModel>Pili' ], formatter: '.formatBooleanValues' }"></Text>
+																<Text text="{SignalsListJsonModel>Et}"></Text>
+																<Text text="{SignalsListJsonModel>Km}"></Text>
+																<Text text="{ parts: [ 'SignalsListJsonModel>Fn' ], formatter: '.formatBooleanValues' }"></Text>
+																<Text text="{ parts: [ 'SignalsListJsonModel>Fr' ], formatter: '.formatBooleanValues' }"></Text>
+																<Text text="{ parts: [ 'SignalsListJsonModel>Fs' ], formatter: '.formatBooleanValues' }"></Text>
+																<Text text="{ parts: [ 'SignalsListJsonModel>Ft' ], formatter: '.formatBooleanValues' }"></Text>
+																<Text text="{ parts: [ 'SignalsListJsonModel>Tx' ], formatter: '.formatBooleanValues' }"></Text>
+																<Text text="{ parts: [ 'SignalsListJsonModel>Rx' ], formatter: '.formatBooleanValues' }"></Text>
+																<Text text="{ parts: [ 'SignalsListJsonModel>T2' ], formatter: '.formatBooleanValues' }"></Text>
+																<Text text="{ parts: [ 'SignalsListJsonModel>Ts2' ], formatter: '.formatBooleanValues' }"></Text>
+																<Text text="{ parts: [ 'SignalsListJsonModel>Li' ], formatter: '.formatBooleanValues' }"></Text>
+																<Text text="{ parts: [ 'SignalsListJsonModel>Rr' ], formatter: '.formatBooleanValues' }"></Text>
+																<Text text="{SignalsListJsonModel>Et2}"></Text>
+																<Text text="{SignalsListJsonModel>Km2}"></Text>
+																<Text text="{ parts: [ 'SignalsListJsonModel>Fn2' ], formatter: '.formatBooleanValues' }"></Text>
+																<Text text="{ parts: [ 'SignalsListJsonModel>Fr2' ], formatter: '.formatBooleanValues' }"></Text>
+																<Text text="{ parts: [ 'SignalsListJsonModel>Fs2' ], formatter: '.formatBooleanValues' }"></Text>
+																<Text text="{ parts: [ 'SignalsListJsonModel>Ft2' ], formatter: '.formatBooleanValues' }"></Text>
+																<Text text="{ parts: [ 'SignalsListJsonModel>Tx2' ], formatter: '.formatBooleanValues' }"></Text>
+																<Text text="{ parts: [ 'SignalsListJsonModel>Rx2' ], formatter: '.formatBooleanValues' }"></Text>
+																<Text text="{ parts: [ 'SignalsListJsonModel>T22' ], formatter: '.formatBooleanValues' }"></Text>
+																<Text text="{ parts: [ 'SignalsListJsonModel>Ts22' ], formatter: '.formatBooleanValues' }"></Text>
+																<Text text="{ parts: [ 'SignalsListJsonModel>Li2' ], formatter: '.formatBooleanValues' }"></Text>
+																<Text text="{ parts: [ 'SignalsListJsonModel>Rr2' ], formatter: '.formatBooleanValues' }"></Text>
+																<Button icon="sap-icon://edit" class="buttonInverted" press="editSignal"/>
+																<Button icon="sap-icon://delete" class="buttonInverted" press="deleteSignalsFromTable"/>
+															</cells>
+														</ColumnListItem>
+													</items>
+												</Table>
+											</ScrollContainer>
+										</VBox>
+									</content>
+								</Panel>
+								<Panel expanded="true" expandable="true" headerText="Pruebas">
+									<content>
+										<VBox>
+											<HBox class="form">
+												<items>
+													<Label text="Código de Relación:" width="200px" class="CustomLabel" textAlign="Left"/>
+													<Input id="DPRelation" width="90px" value="{PruebasFormJsonModel>/Posicion}" editable="{UserDataModel>/oVisualizador}">
+														<layoutData>
+															<FlexItemData growFactor="1"/>
+														</layoutData>
+													</Input>
+												</items>
+											</HBox>
+											<HBox class="form">
+												<items>
+													<Label text="Fecha de Prueba:" width="200px" class="CustomLabel" textAlign="Left"/>
+													<DateTimePicker id="DPInd" displayFormat="dd/MM/yy HH:mm" class="sapUiSmallMarginBottom" dateValue="{PruebasFormJsonModel>/HoraPrueba}"
+														editable="{UserDataModel>/oVisualizador}" maxDate="{UserDataModel>/DateNow}" initialFocusedDateValue="{UserDataModel>/DateNow}"/>
+												</items>
+											</HBox>
+											<HBox class="form">
+												<Label text="Comentarios:" width="200px" class="CustomLabel" textAlign="Left"/>
+												<TextArea width="100%" value="{PruebasFormJsonModel>/Comentarios}" editable="{UserDataModel>/oVisualizador}">
+													<layoutData>
+														<FlexItemData growFactor="1"/>
+													</layoutData>
+												</TextArea>
+											</HBox>
+											<Panel class="formFooter">
+												<Button icon="sap-icon://document" class="buttonInverted" text="Nuevo" visible="{UserDataModel>/oVisualizador}" press="cleanPrueba"/>
+												<Button icon="sap-icon://add" press="pruebaAddPress" text="Guardar" visible="{UserDataModel>/oVisualizador}" type="Emphasized"
+													class="floatRight buttonInverted"/>
+											</Panel>
+										</VBox>
+										<Table noDataText="No hay pruebas" items="{PruebasListJsonModel>/Pruebas}">
+											<columns>
+												<Column width="11rem">
+													<Text text="Cod. Rel."/>
+												</Column>
+												<Column width="11rem">
+													<Text text="Comentario"/>
+												</Column>
+												<Column width="11rem">
+													<Text text="Fecha"/>
+												</Column>
+												<Column width="1rem"></Column>
+												<Column width="1rem"></Column>
+											</columns>
+											<items>
+												<ColumnListItem vAlign="Middle">
+													<cells>
+														<Text text="{PruebasListJsonModel>Posicion}" wrapping="false"/>
+														<Text text="{PruebasListJsonModel>Comentarios}" wrapping="false"/>
+														<Text text="{ parts: [ 'PruebasListJsonModel>HoraPrueba' ], formatter: '.formatTime' }" wrapping="false"/>
+														<Button icon="sap-icon://edit" class="buttonInverted" press="editPrueba"/>
+														<Button icon="sap-icon://delete" press="deletePruebasFromTable"/>
+													</cells>
+												</ColumnListItem>
+											</items>
+										</Table>
+									</content>
+								</Panel>
+							</IconTabFilter>
+							<IconTabFilter text="Parametros del Sistema">
+								<content>
+									<VBox>
+										<items>
+											<HBox>
+												<items>
+													<!--<CheckBox selected="{NovedadesFormJsonModel>/Ens}" text="Energia no Suministrada (ENS)" class="sapUiTinyMarginEnd"></CheckBox>-->
+													<Input value="{NovedadesFormJsonModel>/Ensval}" enabled="{UserDataModel>/oVisualizador}"></Input>
+													<Text text="MwH" class="sapUiSmallMarginTop sapUiLargeMarginEnd"></Text>
+													<Text text="Factor de Reducción" class="sapUiSmallMarginTop sapUiTinyMarginEnd"></Text>
+													<Input change="onChangeReduccion" type="Number" value="{NovedadesFormJsonModel>/Factred}" enabled="{UserDataModel>/oVisualizador}"></Input>
+												</items>
+											</HBox>
+											<Text text="Potencia Cortada: {NovedadesFormJsonModel>/Potenafect}" class="sapUiSmallMarginBegin sapUiSmallMarginBottomTop"></Text>
+											<Table items="{ENSListJsonModel>/ENSRegisters}">
+												<columns>
+													<Column width="200px">
+														<Text text="Potencia [MW]"/>
+													</Column>
+													<Column>
+														<Text text="Hora Inicio"/>
+													</Column>
+													<Column>
+														<Text text="Hora Reposición"/>
+													</Column>
+													<Column>
+														<Text text="ENS [MWH]"/>
+													</Column>
+													<Column>
+														<Text text="TIEMPO [MIN]"/>
+													</Column>
+													<Column>
+														<Text text="Observaciones"></Text>
+													</Column>
+													<Column width="20px">
+														<Button icon="sap-icon://add" class="buttonInverted" press="onAddENS" visible="{UserDataModel>/oVisualizador}"></Button>
+													</Column>
+												</columns>
+												<items>
+													<ColumnListItem>
+														<cells>
+															<HBox>
+																<items>
+																	<Input type="Number" value="{ENSListJsonModel>Potencia}" change="calcRowCorte"></Input>
+																	<Text text="MW" class="sapUiSmallMarginTop">
+																		<layoutData>
+																			<FlexItemData shrinkFactor="0"/>
+																		</layoutData>
+																	</Text>
+																</items>
+															</HBox>
+															<DateTimePicker displayFormat="dd/MM/yy HH:mm:ss" dateValue="{ENSListJsonModel>Begtime}" change="calcRowCorte"
+															 maxDate="{UserDataModel>/DateNow}" initialFocusedDateValue="{UserDataModel>/DateNow}"></DateTimePicker>
+															<DateTimePicker displayFormat="dd/MM/yy HH:mm:ss" change="calcRowCorte" dateValue="{ENSListJsonModel>Reptime}"
+															 maxDate="{UserDataModel>/DateNow}" initialFocusedDateValue="{UserDataModel>/DateNow}"></DateTimePicker>
+															<Input value="{ENSListJsonModel>ENSRow}" enabled="false"></Input>
+															<Text text="{ENSListJsonModel>Corte} MIN" class="sapUiSmallMarginTop"></Text>
+															<Input value="{ENSListJsonModel>Comments}"></Input>
+															<HBox>
+																<Button icon="sap-icon://delete" class="buttonInverted" press="onDeleteENS" visible="{UserDataModel>/oVisualizador}"></Button>
+															</HBox>
+														</cells>
+													</ColumnListItem>
+												</items>
+											</Table>
+										</items>
+									</VBox>
+								</content>
+							</IconTabFilter>
+						</items>
+					</IconTabBar>
+				</content>
+			</Page>
+		</pages>
+	</App>
+</mvc:View>

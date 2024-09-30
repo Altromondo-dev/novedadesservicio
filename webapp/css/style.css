@@ -1,0 +1,260 @@
+.CustomTabHeder,
+.sapMITH {
+    background-color: white
+}
+
+.CustomLabel,
+.CustomPanel {
+    margin-top: 10px;
+    padding-left:10px;
+}
+
+.customPanel header {
+    background: #eaeaea
+}
+.customPanel .sapMPanelContent {
+    background: #f3f3f3
+}
+.customPanel {
+    margin: 15px;
+}
+
+.dialogProgress{
+	width:300px;
+}
+
+footer {
+    background-color: white;
+}
+html.sap-desktop .sapContrast.sapMIBar.sapMFooter-CTX {
+    border: none;
+    /*box-shadow: 0px -7px 10px rgba(0, 0, 0, 0.1);*/
+}
+html.sap-desktop .sapContrast.sapMIBar.sapMFooter-CTX {
+    background-color: transparent !important;
+}
+.buttonInverted span {
+    background-color: #3a668b !important;
+    color: white !important;
+    font-weight: bold !important;
+}
+
+.buttonInverted span .sapUiIcon::before {
+    font-size: 16px;
+    vertical-align: top;
+}
+.firstCheckBox .sapMCbBg,
+html.sap-desktop .sapMCb.firstCheckBox:not(.sapMCbBgDis):not(.sapMCbDisplayOnly).sapMCbHasLabel:focus:before {
+    left: 0
+}
+.ContentHeader {
+    flex-wrap: wrap-reverse;
+    background-color: white!important;
+}
+
+.ContentHeader.sapUiMediumMargin {
+    margin: 1rem!important;
+    background-color: white!important;
+}
+.titleBlue {
+    color: #225c8d;
+    font-weight: bold;
+    text-indent: 20px;
+    background-color: white!important;
+}
+.sapUshellShell .sapMPageBgStandard {
+    background-color: white;
+}
+.subTitleBlue {
+    color: #225c8d;
+    text-indent: 20px;
+}
+.CustomPanel {
+    border: 2px solid grey;
+    margin-bottom: 5px
+}
+
+.sapMITH {
+    box-shadow: inset 0 -.25rem 0 -.125rem #d1e0ee;
+    border-bottom: .125rem solid #eff4f9
+}
+
+.CustomTab {
+    background-color: #ebebeb
+}
+
+
+
+.sapMITBContent {
+    padding: 1rem;
+    position: relative
+}
+
+.CustomPage .sapMITBInLine.sapMITBTextOnly>.sapMITBVertical>div,
+.sapMITBHead {
+    margin-top: 0
+}
+
+.CustomMargin {
+    margin-left: 10px
+}
+
+.CustomPage .sapUiBlockLayoutSizeL .sapUiBlockCellContent {
+    padding: 1rem;
+    font-size: 1rem
+}
+
+.PaddingTable {
+    padding-top: 20px
+}
+
+.indent1ColumnFlex,
+.indent2ColumnFlex {
+    margin-left: 12.5%;
+    width: 87.5%
+}
+
+.floatRight {
+    float: right
+}
+
+.CustomPage .sapUiBlockCellContent {
+    background-color: #d3d3d33d
+}
+
+.CustomPage .sapMITBInLine.sapMITBTextOnly>.sapMITBVertical {
+    height: 2rem
+}
+
+.thinHR {
+    opacity: .5
+}
+
+.heightvh50.sapMInputBase.sapMTextArea {
+    height: 50vh
+}
+
+.form {
+    /*padding-left: 35px;*/
+    padding-right: 35px;
+    padding-top: 10px;
+  
+    background-color: #d3d3d375
+}
+.form-b{
+  padding-bottom: 10px;
+   padding-top: 0px !important;
+}
+
+.formFooter {
+    padding-left: 15px;
+    padding-right: 15px;
+    
+}
+
+.formFooter .sapMPanelContent {
+    padding: 0
+}
+
+.sapMCb.firstCheckBox {
+    padding-left: 2rem;
+    
+}
+/*.grow-grow{*/
+/*	flex-grow:1 !important;*/
+/*}*/
+
+.form-pad{
+	padding:16px 0px;
+}
+
+.mMarRi{
+	margin-right:40px !important;
+    margin-left:10px !important;
+}
+/*.sapMTableTH{
+	padding:6px 6px !important;
+}*/
+.pad-pad{
+	margin-bottom:10px !important;
+}
+.customPage .sapMITBContent,
+.formContainer,
+.sapMITBContent {
+    background-color: #fff !important;
+}
+.sapMPageEnableScrolling{
+	 background-color: #fff !important;
+}
+.marginLeftS{
+	margin-left:10px;
+}
+
+
+.sapMDialogFooter .sapMBtnBase .sapMBtnDefault {
+	text-shadow: none;
+}
+
+.sapMDialogFooter .sapMBtnBase span {
+	background-color: #3a668b!important;
+	color: #fff!important;
+	font-weight: 700!important
+}
+
+.sapMDialogFooter .sapMBtnBase span .sapUiIcon::before {
+	font-size: 16px;
+	vertical-align: top
+}
+
+
+
+.sapMPopoverFooter .sapMBtnBase .sapMBtnDefault {
+	text-shadow: none;
+}
+
+.sapMPopoverFooter .sapMBtnBase span {
+	background-color: #3a668b!important;
+	color: #fff!important;
+	font-weight: 700!important
+}
+
+
+.sapMPopoverFooter .sapMBtnBase span .sapUiIcon::before {
+	font-size: 16px;
+	vertical-align: top
+}
+.sapMInputBaseReadonly .sapMInputBaseContentWrapper {
+    background: #fff;
+}
+
+.no-padding-header-table th>div {
+	padding: 0;
+}
+
+.labelEdit{
+	padding-top:5px;
+}
+
+
+.panelPrueba{
+	overflow-y:scroll !important;
+	overflow-x:hidden !important;
+    height:calc(80vh - 400px);
+}
+/*.sapMPage>section.sapMPageEnableScrolling{*/
+/*	overflow-y:inherit;*/
+/*}*/
+/*#__page0-cont{*/
+/*	overflow:hidden !important;*/
+/*}*/
+#__data1412{
+	display: flex;
+    justify-content: flex-end;
+    padding-right: 10px;
+}
+
+.customDialog {
+    top:calc(40% + 0px) !important;
+}
+
+

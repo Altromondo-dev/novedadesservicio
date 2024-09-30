@@ -1,0 +1,34 @@
+{
+    "application": {
+        "id": "",
+        "title": "Transener.Operaciones.NovedadesServicio.NovedadesServicio",
+        "type": "SAP_UI5_Component",
+        "componentUrl": "/webapp",
+        "appUrl": "#NovedadesServicio-Display",
+        "navigationComponentName": "Transener.Operaciones.NovedadesServicio",
+        "intentSemanticObject": "NovedadesServicio",
+        "intentAction": "Display",
+        "html5ApplicationName": "novedadesservicio",
+        "HCPParentApplicationName": ""
+    },
+    "assignment": {
+        "groups": [
+            "13320d71-10b0-40aa-8939-103eaff996ca-1535247830537"
+        ],
+        "contentPackages": [
+            "549ee2a0-cdef-48f0-b215-1310de08be22-1536194910206"
+        ],
+        "categories": []
+    },
+    "tile": {
+        "type": "StaticTile",
+        "title": "Novedades de Servicio",
+        "subtitle": "",
+        "searchKeywords": "Novedades de Servicio,",
+        "displayIconUrl": "sap-icon://approvals",
+        "displayInfoText": "",
+        "size": "1x1",
+        "serviceURL": "",
+        "refreshInterval": ""
+    }
+}
