@@ -283,7 +283,7 @@ sap.ui.define([
 			return true;
 		},
 		validateViewEquipos: function (groups) {
-			var roles = ["Programacion_COTDT", "Programacion_COT", "Jefe_COTDT", "Jefe_COT"];
+			var roles = ["OPE_PROGRAMACION_COTDT", "OPE_PROGRAMACION_COT", "OPE_JEFE_COTDT", "OPE_JEFE_COT"];
 			if (groups.constructor === String) groups = [groups];
 			for (var row in groups) {
 				if (roles.includes(groups[row]))
