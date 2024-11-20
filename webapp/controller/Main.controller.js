@@ -36,6 +36,7 @@ sap.ui.define([
 	"Transener/Operaciones/NovedadesServicio/services/ReportesService",
 	"Transener/Operaciones/NovedadesServicio/services/SubindiceService",
 	"Transener/Operaciones/NovedadesServicio/services/RefreshService",
+	"Transener/Operaciones/NovedadesServicio/utils/formatter",
 	//dejar abajo de todo, librerias sin nombre
 
 ], function (Controller, TipoEquipoService, NovedadesService, EquiposService, EstacionesService, UbicacionesService, MotivosService,
@@ -46,7 +47,7 @@ sap.ui.define([
 	models, AppManagementHelper, CammesaService, ComentariosService, PruebasService, oDataService, SignalsService, MessageBoxHelper,
 	FioriHelper,
 	ValidateHelper, NovedadDialogHelper, FormatHelper, BusyDialogHelper, Export, ParametrosSistemaService,
-	ReportesService, SubindiceService, RefreshService
+	ReportesService, SubindiceService, RefreshService,formatter
 ) {
 	"use strict";
 
@@ -57,6 +58,7 @@ sap.ui.define([
 		addConsecuente: true,
 		addSignal: true,
 		addPrueba: true,
+		formatter: formatter,
 
 		goToEquipment: function () {
 			location.hash = "PropiedadesEquipos-Display?Empresa=" + this.society;
@@ -180,9 +182,9 @@ sap.ui.define([
 				.then(() => {
 					//check if data has been loaded
 					//for local testing, set mock data
-					if (oModel.getData().email) {
+					if (oModel.getData().name) {
 
-						var cUrl = sap.ui.getCore().getModel("appCurrentInfo").appUrl + '/IAS/scim/Users?filter=emails.value eq "' + oModel.getData().email + '"'
+						var cUrl = sap.ui.getCore().getModel("appCurrentInfo").appUrl + '/IAS/service/scim/Users?filter=userName eq "' + oModel.getData().name + '"'
 
 						//Llamar a API del IAS
 						$.ajax({
@@ -205,8 +207,7 @@ sap.ui.define([
 								var aDatosUsuario = that.armarDatos(data.Resources);
 
 								oModel.setData(aDatosUsuario);
-								//oView.getView().setModel(oModel, "users");
-
+								that.onSuccessUserApi(aDatosUsuario)
 							},
 							error: function (data, xhr, textStatus) {
 								console.log(data);
@@ -235,7 +236,7 @@ sap.ui.define([
 			var aGroupsTemporal = datos[0].groups;
 
 			var aGroups = aGroupsTemporal.map(function (fila) {
-				return fila.display;
+				return fila.value;
 			});
 
 			var aUserData = {
@@ -277,13 +278,13 @@ sap.ui.define([
 		ValidateVisualizador: function (Groups) {
 			if (Groups.constructor === String) Groups = [Groups];
 			for (var row in Groups) {
-				if (Groups[row] == "Visualizador")
+				if (Groups[row] == "OPE_VISUALIZADOR_TR_TB,ope_visualizador_tr_tb")
 					return false;
 			}
 			return true;
 		},
 		validateViewEquipos: function (groups) {
-			var roles = ["OPE_PROGRAMACION_COTDT", "OPE_PROGRAMACION_COT", "OPE_JEFE_COTDT", "OPE_JEFE_COT"];
+			var roles = ["OPE_PROGRAMACION_COTDT", "OPE_PROGRAMACION_COT", "OPE_JEFE_COTDT", "OPE_JEFE_COT","ope_programacion_cotdt","ope_programacion_cot","ope_jefe_cotdt","ope_jefe_cot"];
 			if (groups.constructor === String) groups = [groups];
 			for (var row in groups) {
 				if (roles.includes(groups[row]))
@@ -605,16 +606,17 @@ sap.ui.define([
 			//TODO remover esto al permitir la edicion de la ET
 			//AppManagementHelper.getModel("PerturbationJsonModel").setProperty("/Perturbacion/0/Et", oEvent.getSource().getSelectedKey());
 			//AppManagementHelper.getModel("PerturbationJsonModel").setProperty("/Perturbacion/0/Et2", oEvent.getSource().getSelectedKey());
-			var estacion = oEvent.getSource().getSelectedItem().getBindingContext("EstacionesJsonModel").getObject().Estacion;
+			var estacion = oEvent.getSource().getSelectedItem().getBindingContext("EstacionesJsonModel").getObject().Codigo;
+			var codigo = oEvent.getSource().getSelectedItem().getBindingContext("EstacionesJsonModel").getObject().Estacion;
 			AppManagementHelper.getModel("NovedadesFormJsonModel").setProperty("/Estacion", estacion);
 			var consecuenteModel = AppManagementHelper.getModel("ConsecuentesFormJsonModel");
 			var novedadesModel = AppManagementHelper.getModel("NovedadesFormJsonModel");
 			consecuenteModel.setProperty("/Tplnr", novedadesModel.getProperty("/Tplnr"));
 			var tipo = AppManagementHelper.getModel("NovedadesFormJsonModel").getProperty("/CodTipo");
 			if (this.lineas.includes(tipo)) {
-				EquiposService.loadEquipos(tipo, null, this.society);
+				EquiposService.loadEquipos(tipo, null,null, this.society);
 			} else if (tipo && estacion) {
-				EquiposService.loadEquipos(tipo, estacion, this.society);
+				EquiposService.loadEquipos(tipo, estacion, codigo, this.society);
 			}
 
 			this.getSubindice();
@@ -632,13 +634,14 @@ sap.ui.define([
 		},
 
 		tipoEquipoChanged: function (oEvent) {
+			AppManagementHelper.getModel("NovedadesFormJsonModel").setProperty("/Equnr", "");
 			var tipo = oEvent.getSource().getSelectedKey();
 			var estacion = AppManagementHelper.getModel("NovedadesFormJsonModel").getProperty("/Estacion");
 			if (this.lineas.includes(tipo)) {
 				delete (AppManagementHelper.getModel("NovedadesFormJsonModel").Estacion);
-				EquiposService.loadEquipos(tipo, null, this.society);
+				EquiposService.loadEquipos(tipo, null,null, this.society);
 			} else if (tipo && estacion) {
-				EquiposService.loadEquipos(tipo, estacion, this.society);
+				EquiposService.loadEquipos(tipo, estacion,null, this.society);
 			}
 		},
 

@@ -16,8 +16,8 @@
     },
     "crossNavigation": {
       "inbounds": {
-        "NovedadesServicio-Display": {
-          "semanticObject": "NovedadesServicio",
+        "TransenerOperacionesNovedades-Display": {
+          "semanticObject": "TransenerOperacionesNovedades",
           "action": "Display",
           "title": "{{flpTitle}}",
           "signature": {
