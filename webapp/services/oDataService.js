@@ -30,7 +30,7 @@ sap.ui.define([
 			},
 
 			_getBaseUrl: function () {
-				debugger;
+				
 				var mBaseUrl = sap.ui.getCore().getModel("appCurrentInfo").appUrl;
 				return mBaseUrl;
 			},

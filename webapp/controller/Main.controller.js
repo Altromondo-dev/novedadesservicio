@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 jQuery.sap.require("Transener/Operaciones/NovedadesServicio/libs/xlsx");
 jQuery.sap.require("Transener/Operaciones/NovedadesServicio/libs/jszip");
 sap.ui.define([
@@ -47,7 +48,7 @@ sap.ui.define([
 	models, AppManagementHelper, CammesaService, ComentariosService, PruebasService, oDataService, SignalsService, MessageBoxHelper,
 	FioriHelper,
 	ValidateHelper, NovedadDialogHelper, FormatHelper, BusyDialogHelper, Export, ParametrosSistemaService,
-	ReportesService, SubindiceService, RefreshService,formatter
+	ReportesService, SubindiceService, RefreshService, formatter
 ) {
 	"use strict";
 
@@ -93,7 +94,7 @@ sap.ui.define([
 		// },
 		getBaseURL: function () {
 
-			debugger;
+
 
 			var appId = this.getOwnerComponent().getManifestEntry("/sap.app/id");
 
@@ -139,7 +140,7 @@ sap.ui.define([
 
 
 		loadUserDataModel: function (callback) {
-			debugger;
+
 			var UserDataService = this;
 			this.callback = callback;
 			//reads user api
@@ -199,11 +200,11 @@ sap.ui.define([
 							success: function (data, textStatus, jqXHR) {
 
 								//window.alert("success");
-								console.log("It works");
+
 								var oModelUser = new sap.ui.model.json.JSONModel();
 								oModelUser.setData(data.Resources);
 
-								debugger;
+
 								var aDatosUsuario = that.armarDatos(data.Resources);
 
 								oModel.setData(aDatosUsuario);
@@ -213,7 +214,7 @@ sap.ui.define([
 								console.log(data);
 								console.log(xhr);
 								console.log(textStatus);
-								debugger;
+
 								window.alert("error");
 							}
 						});
@@ -231,7 +232,7 @@ sap.ui.define([
 
 		armarDatos: function (datos) {
 
-			debugger;
+
 
 			var aGroupsTemporal = datos[0].groups;
 
@@ -276,21 +277,27 @@ sap.ui.define([
 		},
 		onErrorUserApi: function () { },
 		ValidateVisualizador: function (Groups) {
-			if (Groups.constructor === String) Groups = [Groups];
-			for (var row in Groups) {
-				if (Groups[row] == "OPE_VISUALIZADOR_TR_TB,ope_visualizador_tr_tb")
-					return false;
+
+			if (typeof Groups === "string") {
+				Groups = [Groups];
 			}
-			return true;
+
+			return !Groups.some(group => group === "ope_visualizador_tr_tb" || group === "Visualizador");
 		},
 		validateViewEquipos: function (groups) {
-			var roles = ["OPE_PROGRAMACION_COTDT", "OPE_PROGRAMACION_COT", "OPE_JEFE_COTDT", "OPE_JEFE_COT","ope_programacion_cotdt","ope_programacion_cot","ope_jefe_cotdt","ope_jefe_cot"];
-			if (groups.constructor === String) groups = [groups];
-			for (var row in groups) {
-				if (roles.includes(groups[row]))
-					return true;
+
+			const roles = [
+				"Programacion_COTDT", "Programacion_COT", "Jefe_COTDT", "Jefe_COT",
+				"ope_programacion_cotdt", "ope_programacion_cot", "ope_jefe_cotdt", "ope_jefe_cot"
+			];
+
+
+			if (typeof groups === "string") {
+				groups = [groups];
 			}
-			return false;
+
+
+			return groups.some(group => roles.includes(group));
 		},
 		onAfterRendering: function () {
 			this.loadSociety();
@@ -459,7 +466,7 @@ sap.ui.define([
 			EstacionesService.loadEstaciones(this.society);
 			CausasService.loadAll(this.society);
 
-			if (this.society == 300) {
+			if (this.society === "300") {
 				AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/GenIndisponibilidad", true);
 				AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/Vinculadost", true);
 				AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/Texto", "Vinculado y sin tensión.");
@@ -492,11 +499,13 @@ sap.ui.define([
 		handleTypeChange: function (oEvent) {
 			var tipo = oEvent.getSource().getSelectedKey();
 			var estacion = AppManagementHelper.getModel("ConsecuentesFormJsonModel").getProperty("/Tplnr");
+			AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/Equnr", "");
+
 			if (this.lineas.includes(tipo)) {
 				delete (AppManagementHelper.getModel("ConsecuentesFormJsonModel").getData().Tplnr);
-				EquiposService.loadEquipos(tipo, null, this.society, AppManagementHelper.getModel("EquiposConsecuentesJsonModel"));
+				EquiposService.loadEquipos(tipo, null, null, this.society, AppManagementHelper.getModel("EquiposConsecuentesJsonModel"));
 			} else if (tipo && estacion) {
-				EquiposService.loadEquipos(tipo, estacion, this.society, AppManagementHelper.getModel("EquiposConsecuentesJsonModel"));
+				EquiposService.loadEquipos(tipo, estacion, null, this.society, AppManagementHelper.getModel("EquiposConsecuentesJsonModel"));
 			}
 			var sValue = oEvent.getParameter("value");
 			AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/DescTipo", sValue);
@@ -603,18 +612,21 @@ sap.ui.define([
 		},
 
 		changeUbicacion: function (oEvent) {
-			//TODO remover esto al permitir la edicion de la ET
-			//AppManagementHelper.getModel("PerturbationJsonModel").setProperty("/Perturbacion/0/Et", oEvent.getSource().getSelectedKey());
-			//AppManagementHelper.getModel("PerturbationJsonModel").setProperty("/Perturbacion/0/Et2", oEvent.getSource().getSelectedKey());
-			var estacion = oEvent.getSource().getSelectedItem().getBindingContext("EstacionesJsonModel").getObject().Codigo;
-			var codigo = oEvent.getSource().getSelectedItem().getBindingContext("EstacionesJsonModel").getObject().Estacion;
-			AppManagementHelper.getModel("NovedadesFormJsonModel").setProperty("/Estacion", estacion);
+			AppManagementHelper.getModel("NovedadesFormJsonModel").setProperty("/Equnr", "");
+
+
 			var consecuenteModel = AppManagementHelper.getModel("ConsecuentesFormJsonModel");
 			var novedadesModel = AppManagementHelper.getModel("NovedadesFormJsonModel");
+			//Paso la ubicacion a solapa consecuentes 
 			consecuenteModel.setProperty("/Tplnr", novedadesModel.getProperty("/Tplnr"));
+
+			//Traigo los parametros para la busqueda de los Equipos.
 			var tipo = AppManagementHelper.getModel("NovedadesFormJsonModel").getProperty("/CodTipo");
+			var estacion = oEvent.getSource().getSelectedItem().getBindingContext("EstacionesJsonModel").getObject().Codigo;
+			var codigo = oEvent.getSource().getSelectedItem().getBindingContext("EstacionesJsonModel").getObject().Estacion;
+
 			if (this.lineas.includes(tipo)) {
-				EquiposService.loadEquipos(tipo, null,null, this.society);
+				EquiposService.loadEquipos(tipo, null, null, this.society);
 			} else if (tipo && estacion) {
 				EquiposService.loadEquipos(tipo, estacion, codigo, this.society);
 			}
@@ -623,26 +635,44 @@ sap.ui.define([
 		},
 
 		changeUbicacionConsecuentes: function (oEvent) {
-			var estacion = oEvent.getSource().getSelectedItem().getBindingContext("EstacionesJsonModel").getObject().Estacion;
+			AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/Equnr", "");
+			var estacion = oEvent.getSource().getSelectedItem().getBindingContext("EstacionesJsonModel").getObject().Codigo;
 			var tipo = AppManagementHelper.getModel("ConsecuentesFormJsonModel").getProperty("/CodTipo");
+			var codigo = oEvent.getSource().getSelectedItem().getBindingContext("EstacionesJsonModel").getObject().Estacion;
 			//AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/Estacion", estacion);
+			// 	if (this.lineas.includes(tipo)) {
+			// 		EquiposService.loadEquipos(tipo, null, this.society, AppManagementHelper.getModel("EquiposConsecuentesJsonModel"));
+			// 	} else if (tipo && estacion) {
+			// 		EquiposService.loadEquipos(tipo, estacion, this.society, AppManagementHelper.getModel("EquiposConsecuentesJsonModel"));
+			// 	}
 			if (this.lineas.includes(tipo)) {
-				EquiposService.loadEquipos(tipo, null, this.society, AppManagementHelper.getModel("EquiposConsecuentesJsonModel"));
+				EquiposService.loadEquipos(tipo, null, null, this.society, AppManagementHelper.getModel("EquiposConsecuentesJsonModel"));
 			} else if (tipo && estacion) {
-				EquiposService.loadEquipos(tipo, estacion, this.society, AppManagementHelper.getModel("EquiposConsecuentesJsonModel"));
+				EquiposService.loadEquipos(tipo, estacion, codigo, this.society, AppManagementHelper.getModel("EquiposConsecuentesJsonModel"));
 			}
 		},
 
 		tipoEquipoChanged: function (oEvent) {
+			//Limpio combo Equipo
 			AppManagementHelper.getModel("NovedadesFormJsonModel").setProperty("/Equnr", "");
-			var tipo = oEvent.getSource().getSelectedKey();
-			var estacion = AppManagementHelper.getModel("NovedadesFormJsonModel").getProperty("/Estacion");
+
+			//Traigo parametros para filtros
+			var tipo = oEvent.getSource().getSelectedKey(); // Obtén el valor seleccionado del ComboBox.
+			var estacion = AppManagementHelper.getModel("NovedadesFormJsonModel").getProperty("/Tplnr"); // Obtén la estación desde el modelo.
+			var codigo = this.getView().byId("NUbicacion")?.getSelectedItem()?.getBindingContext("EstacionesJsonModel")?.getObject()?.Estacion; // Obtén el código de manera segura.
+
 			if (this.lineas.includes(tipo)) {
-				delete (AppManagementHelper.getModel("NovedadesFormJsonModel").Estacion);
-				EquiposService.loadEquipos(tipo, null,null, this.society);
+				// Si `tipo` pertenece a las líneas definidas, elimina la propiedad 'Estacion' del modelo y carga los equipos.
+				var novedadesFormModel = AppManagementHelper.getModel("NovedadesFormJsonModel");
+				if (novedadesFormModel) {
+					delete novedadesFormModel.Estacion; // Elimina la propiedad si existe.
+				}
+				EquiposService.loadEquipos(tipo, null, null, this.society); // Carga los equipos sin estación ni código.
 			} else if (tipo && estacion) {
-				EquiposService.loadEquipos(tipo, estacion,null, this.society);
+				// Si `tipo` y `estacion` están definidos, carga los equipos con estos valores.
+				EquiposService.loadEquipos(tipo, estacion, codigo, this.society);
 			}
+
 		},
 
 		formatName: function (bEditable) {
@@ -1179,7 +1209,7 @@ sap.ui.define([
 
 		vinculadoChanged: function (evt) {
 			var isSelected = evt.getParameter("selected");
-			if (this.society == 300) {
+			if (this.society === "300") {
 				var consecuenteModel = AppManagementHelper.getModel("ConsecuentesFormJsonModel");
 				var comment = consecuenteModel.getProperty("/Texto");
 				var final = "";
@@ -1582,10 +1612,11 @@ sap.ui.define([
 			}
 			var sPath = FioriHelper.getAppPath();
 			AppManagementHelper.getModel("ConsecuentesFormJsonModel").loadData(sPath + "model/ConsecuentesFormJsonModel.json", "", false);
-			if (this.society == 300) {
+			if (this.society === "300") {
 				AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/GenIndisponibilidad", true);
 				AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/Vinculadost", true);
 				AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/CodDispAct", "NI");
+				AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/Texto", "Vinculado y sin tensión.");
 			}
 			var consecuenteModel = AppManagementHelper.getModel("ConsecuentesFormJsonModel");
 			var novedadesModel = AppManagementHelper.getModel("NovedadesFormJsonModel");
@@ -5817,7 +5848,7 @@ sap.ui.define([
 				this.setNavigationPropertiesData(oSelectedNovedad);
 				MotivosService.loadModel(oSelectedNovedad.CodNovedad, oSelectedNovedad.Empresa);
 				CausasService.loadModel(oSelectedNovedad.CodNovedad, oSelectedNovedad.CodMotivo, oSelectedNovedad.Empresa);
-				EquiposService.loadEquipos(oSelectedNovedad.CodTipo, oSelectedNovedad.Estacion, oSelectedNovedad.Empresa);
+				EquiposService.loadEquipos(oSelectedNovedad.CodTipo, oSelectedNovedad.Estacion, null, oSelectedNovedad.Empresa);
 				LicenciaService.loadList(oSelectedNovedad.Empresa, oSelectedNovedad.IdNovedad);
 				oUtilsJsonModel.setProperty("/editable", false);
 				oUtilsJsonModel.setProperty("/editableMode", true);

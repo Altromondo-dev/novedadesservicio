@@ -140,7 +140,7 @@
 															<ComboBox enabled="{parts: ['UtilsJsonModel>/editable', 'NovedadesFormJsonModel>/CodTipo', 'UserDataModel>/viewEquipos'], formatter: '.isUbicacionEditable'}"
 																editable="{UserDataModel>/oVisualizador}" change="changeUbicacion" valueState="{NovedadesFormJsonModel>/TplnrState}"
 																valueStateText="{NovedadesFormJsonModel>/TplnrStateMessage}" items="{EstacionesJsonModel>/Estaciones}" width="100%"
-																selectedKey="{NovedadesFormJsonModel>/Tplnr}" app:inputId="NUbicacion">
+																selectedKey="{NovedadesFormJsonModel>/Tplnr}" app:inputId="NUbicacion" id="NUbicacion">
 																<core:Item key="{EstacionesJsonModel>Codigo}" text="{EstacionesJsonModel>Descripcion}"/>
 																<layoutData>
 																	<FlexItemData growFactor="10"/>
@@ -155,26 +155,26 @@
 																	<FlexItemData growFactor="1"/>
 																</layoutData>
 															</Label>
-															<custom:isComboBox editable="{= (${UtilsJsonModel>/editable} &amp;&amp; ${UserDataModel>/oVisualizador}) || ${UserDataModel>/viewEquipos}}"
+															<ComboBox editable="{= (${UtilsJsonModel>/editable} &amp;&amp; ${UserDataModel>/oVisualizador}) || ${UserDataModel>/viewEquipos}}"
 																enabled="{= ${UserDataModel>/viewEquipos} || ${UtilsJsonModel>/editable}}"
 																valueState="{NovedadesFormJsonModel>/EqunrState}" valueStateText="{NovedadesFormJsonModel>/EqunrStateMessage}"
 																items="{ path: 'EquiposJsonModel>/Equipos'}" width="160px" change="getSubindice" selectedKey="{NovedadesFormJsonModel>/Equnr}"
 																app:inputId="NEquipo">
 																<core:Item key="{EquiposJsonModel>Codigo}" text="{EquiposJsonModel>Codigo}"/>
-																<custom:layoutData>
+																<layoutData>
 																	<FlexItemData growFactor="0"/>
-																</custom:layoutData>
-															</custom:isComboBox>
-															<custom:isComboBox editable="{= (${UtilsJsonModel>/editable} &amp;&amp; ${UserDataModel>/oVisualizador}) || ${UserDataModel>/viewEquipos}}"
+																</layoutData>
+															</ComboBox>
+															<ComboBox editable="{= (${UtilsJsonModel>/editable} &amp;&amp; ${UserDataModel>/oVisualizador}) || ${UserDataModel>/viewEquipos}}"
 																enabled="{= ${UserDataModel>/viewEquipos} || ${UtilsJsonModel>/editable}}"
 																valueState="{NovedadesFormJsonModel>/EqunrState}" valueStateText="{NovedadesFormJsonModel>/EqunrStateMessage}"
 																items="{ path: 'EquiposJsonModel>/Equipos'}" width="100%" change="getSubindice" selectedKey="{NovedadesFormJsonModel>/Equnr}"
-																app:inputId="NEquipo">
-																<core:Item key="{EquiposJsonModel>Codigo}" text="{EquiposJsonModel>Descripcion}"/>
-																<custom:layoutData>
+																app:inputId="NEquipo" busy="{EquiposJsonModel>/Busy}">
+																<core:Item key="{EquiposJsonModel>Codigo}" text="{EquiposJsonModel>Descripcion}" />
+																<layoutData>
 																	<FlexItemData growFactor="10"/>
-																</custom:layoutData>
-															</custom:isComboBox>
+																</layoutData>
+															</ComboBox>
 														</items>
 													</FlexBox>
 													<html:hr class="thinHR"></html:hr>
@@ -1300,7 +1300,7 @@
 											<Text text="Potencia Cortada: {NovedadesFormJsonModel>/Potenafect}" class="sapUiSmallMarginBegin sapUiSmallMarginBottomTop"></Text>
 											<Table items="{ENSListJsonModel>/ENSRegisters}">
 												<columns>
-													<Column width="200px">
+													<Column width="180px">
 														<Text text="Potencia [MW]"/>
 													</Column>
 													<Column>
@@ -1318,7 +1318,7 @@
 													<Column>
 														<Text text="Observaciones"></Text>
 													</Column>
-													<Column width="20px">
+													<Column >
 														<Button icon="sap-icon://add" class="buttonInverted" press="onAddENS" visible="{UserDataModel>/oVisualizador}"></Button>
 													</Column>
 												</columns>

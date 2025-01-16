@@ -14,17 +14,23 @@ sap.ui.define([
 		_entitySet: "/NSEquiposSet",
 		lineas: ["L1", "L2", "L3", "L4", "L5", "L6", "L9"],
 
-		loadEquipos: function (tipo, estacion,codigo, empresa, model) {
-			var aFilter = [new sap.ui.model.Filter("IEmpresa", sap.ui.model.FilterOperator.EQ, empresa),
-			new sap.ui.model.Filter("IEqart", sap.ui.model.FilterOperator.EQ, tipo)];
+		loadEquipos: function (tipo, estacion, codigo, empresa, model) {
+			AppManagementHelper.getModel("EquiposJsonModel").setData({
+				Busy: true,
+				Equipos: []
+			});
+			var aFilter = [
+				new sap.ui.model.Filter("IEmpresa", sap.ui.model.FilterOperator.EQ, empresa),
+				new sap.ui.model.Filter("IEqart", sap.ui.model.FilterOperator.EQ, tipo)
+			];
 			if (this.lineas.includes(tipo)) {
 				estacion = null;
 				codigo = null;
 			}
-			if(estacion) {
+			if (estacion) {
 				aFilter.push(new sap.ui.model.Filter("Estacion", sap.ui.model.FilterOperator.EQ, estacion));
 			}
-			if(codigo) {
+			if (codigo) {
 				aFilter.push(new sap.ui.model.Filter("Codigo", sap.ui.model.FilterOperator.EQ, codigo));
 			}
 			this.getEquiposPromise(aFilter, model).then($.proxy(this.successGetEquipos, this)).catch($.proxy(this.errorGetEquipos, this));
@@ -56,6 +62,7 @@ sap.ui.define([
 				});
 			} else {
 				AppManagementHelper.getModel("EquiposJsonModel").setData({
+					Busy: false,
 					Equipos: aData
 				});
 			}
@@ -63,7 +70,11 @@ sap.ui.define([
 		},
 
 		errorGetEquipos: function (error) {
-			console.log("Error al cargar Equipos");
+			AppManagementHelper.getModel("EquiposJsonModel").setData({
+				Busy: false,
+				Equipos: []
+			});
+			console.log("Error al cargar Equipos", error);
 		}
 
 	};
