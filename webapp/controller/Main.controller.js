@@ -74,24 +74,6 @@ sap.ui.define([
 			var sKey = oEvent.getParameter("selectedItem").data().id;
 			this._selectedConsecuentesTab = sKey;
 		},
-
-		//this.aaaa();
-		//      aaaa: function () {
-		//      var vh=jQuery(document).height(); 
-		//      var vw=jQuery(document).width(); 
-		//      if(vw>1440){
-		//      	jQuery("#__table1").css({"overflow-y": "scroll !important",
-		//      	                          "overflow-x": "hidden !important",
-		//      		                      "height":"400px"});
-		//          jQuery(".sapMPage>section.sapMPageEnableScrolling").css({"overflow-y": "inherit"});
-		//          jQuery("#__page0-cont").css({"overflow":"hidden !important"});
-
-		//      }else{
-		//      	jQuery("#__table1").css({"overflow-y": "scroll !important","height":"100px"});
-		//      }
-		//      console.log(vh);
-		//      console.log(vw);
-		// },
 		getBaseURL: function () {
 
 
@@ -187,6 +169,7 @@ sap.ui.define([
 
 						var cUrl = sap.ui.getCore().getModel("appCurrentInfo").appUrl + '/IAS/service/scim/Users?filter=userName eq "' + oModel.getData().name + '"'
 
+						// var cUrl = sap.ui.getCore().getModel("appCurrentInfo").appUrl + '/IAS/service/scim/Users?filter=userName eq "GGGQ"'
 						//Llamar a API del IAS
 						$.ajax({
 
@@ -234,7 +217,7 @@ sap.ui.define([
 
 
 
-			var aGroupsTemporal = datos[0].groups;
+			var aGroupsTemporal = datos[0].corporateGroups ? datos[0].corporateGroups : datos[0].groups;
 
 			var aGroups = aGroupsTemporal.map(function (fila) {
 				return fila.value;
@@ -282,6 +265,7 @@ sap.ui.define([
 				Groups = [Groups];
 			}
 
+			return !Groups.some(group => group === "ope_visualizador" || group === "Visualizador");
 			return !Groups.some(group => group === "ope_visualizador_tr_tb" || group === "Visualizador");
 		},
 		validateViewEquipos: function (groups) {
