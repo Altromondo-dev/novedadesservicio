@@ -100,6 +100,8 @@ sap.ui.define([
 
 		onInit: function () {
 
+
+
 			var cUrl = this.getBaseURL();
 			this.loadUserDataModel();
 			this.globalBusyDialog = new sap.m.BusyDialog();
@@ -111,28 +113,13 @@ sap.ui.define([
 					return null;
 				}
 			}
+	
 		},
-		//	loadUserDataModel: function () {
-		//		var Url = "/services/userapi/attributes?multiValuesAsArrays=true";
-		//		jQuery.ajax(Url, {
-		//			method: "GET",
-		//			success: jQuery.proxy(this.onSuccessUserApi, this),
-		//		});
-		//	},
-
-
 		loadUserDataModel: function (callback) {
 
 			var UserDataService = this;
 			this.callback = callback;
-			//reads user api
-			/* var path = this._servicePathPrefix + this._servicePath;
-			jQuery.ajax(path + "?multiValuesAsArrays=true", {
-				method: "GET",
-				success: jQuery.proxy(UserDataService.onReadUserApiSuccess, UserDataService),
-				error: jQuery.proxy(UserDataService.onReadUserApiError, UserDataService)
-			});
-			*/
+
 			const url = sap.ui.getCore().getModel("appCurrentInfo").appUrl + "/user-api/currentUser";
 			var oModel = new sap.ui.model.json.JSONModel();
 			var mock = {
@@ -5779,6 +5766,8 @@ sap.ui.define([
 			MessageBoxHelper.showAlert("Eliminar Licencia", "Ha ocurrido un error al intentar eliminar la licencia.");
 		},
 		onSearchNovedad: function () {
+
+
 			var that = this;
 			var oModel = this.getView().getModel("UtilsJsonModel");
 			var data = {
@@ -5794,7 +5783,7 @@ sap.ui.define([
 			for (var i = 10; i > k; i--) {
 				strId = "0" + strId;
 			}
-
+			AppManagementHelper.getModel("NovedadesFormJsonModel").setProperty("/", []);
 			NovedadesService.blockNovedad(strId).then(function (res) {
 				if (res.Usuario) {
 					MessageBoxHelper.showAlert("Novedad de Servicio", "La novedad se encuentra bloqueada por: " +
@@ -5808,6 +5797,7 @@ sap.ui.define([
 			});
 		},
 		onSearchNovedadUnblocked: function () {
+
 			var oModel = this.getView().getModel("UtilsJsonModel");
 			var data = {
 				NroNovedad: oModel.getProperty("/nroNovedad"),
@@ -5842,11 +5832,11 @@ sap.ui.define([
 					oUtilsJsonModel.setProperty("/CammesaTab", false);
 				}
 				oUtilsJsonModel.setProperty("/IdNovedad", oSelectedNovedad.IdNovedad);
-				this.setNavigationPropertiesData(oSelectedNovedad);
 				MotivosService.loadModel(oSelectedNovedad.CodNovedad, oSelectedNovedad.Empresa);
 				CausasService.loadModel(oSelectedNovedad.CodNovedad, oSelectedNovedad.CodMotivo, oSelectedNovedad.Empresa);
 				EquiposService.loadEquipos(oSelectedNovedad.CodTipo, oSelectedNovedad.Estacion, null, oSelectedNovedad.Empresa);
 				LicenciaService.loadList(oSelectedNovedad.Empresa, oSelectedNovedad.IdNovedad);
+				this.setNavigationPropertiesData(oSelectedNovedad);
 				oUtilsJsonModel.setProperty("/editable", false);
 				oUtilsJsonModel.setProperty("/editableMode", true);
 				oUtilsJsonModel.setProperty("/editableDate", true);

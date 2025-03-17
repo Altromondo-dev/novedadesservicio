@@ -18,7 +18,7 @@ sap.ui.define(["Transener/Operaciones/NovedadesServicio/utils/AppManagementHelpe
 			var oNovedadesJsonModel = AppManagementHelper.getModel("NovedadesFormJsonModel");
 			var sMotivo = AppManagementHelper.getModel("NovedadesFormJsonModel").getProperty("/CodMotivo");
 			var sCodigoNovedad = AppManagementHelper.getModel("NovedadesFormJsonModel").getProperty("/CodNovedad");
-			if ((sMotivo == '02' || sMotivo == '03') && (sCodigoNovedad == 'P')) {
+			if ((sMotivo === "02" || sMotivo === "03") && (sCodigoNovedad === "P")) {
 				oUtilsJsonModel.setProperty("/enabledRadio", true);
 			} else {
 				oUtilsJsonModel.setProperty("/enabledRadio", false);
@@ -323,29 +323,60 @@ sap.ui.define(["Transener/Operaciones/NovedadesServicio/utils/AppManagementHelpe
 			consecuenteModel.setProperty("/FechaHora", cammesaModel.getProperty("/FechaHora"));
 		},
 
+		// preSelectNovedad: function (oEvent) {
+		// 	var that = this;
+
+		// 	var oSelectedNovedad = oEvent.getParameter("listItem").getBindingContext("NovedadesListJsonModel").getObject();
+		// 	if (!NovedadesService) {
+		// 		NovedadesService = this.NovedadesService;
+		// 	}
+		// 	NovedadesService.blockNovedad(oSelectedNovedad.IdNovedad).then(function (res) {
+		// 		if (res.Usuario) {
+		// 			MessageBoxHelper.showAlert("Novedad de Servicio", "La novedad se encuentra bloqueada por: " +
+		// 				res.Usuario);
+		// 			return;
+		// 		}
+		// 		that.selectNovedad.bind(that)(oSelectedNovedad);
+		// 	}, function (err) {
+		// 		MessageBoxHelper.showAlert("Novedad de Servicio", "Ha fallado la busqueda de la novedad: " +
+		// 			oSelectedNovedad.IdNovedad);
+		// 	});
+		// },
 		preSelectNovedad: function (oEvent) {
 			var that = this;
-			var evt = oEvent;
+
 			var oSelectedNovedad = oEvent.getParameter("listItem").getBindingContext("NovedadesListJsonModel").getObject();
-			if (!NovedadesService) {
-				NovedadesService = this.NovedadesService;
+
+			if (!this.NovedadesService) {
+				MessageBoxHelper.showAlert("Error", "El servicio de novedades no está disponible.");
+				return;
 			}
-			NovedadesService.blockNovedad(oSelectedNovedad.IdNovedad).then(function (res) {
-				if (res.Usuario) {
-					MessageBoxHelper.showAlert("Novedad de Servicio", "La novedad se encuentra bloqueada por: " +
-						res.Usuario);
-					return;
-				}
-				that.selectNovedad.bind(that)(oSelectedNovedad);
-			}, function (err) {
-				MessageBoxHelper.showAlert("Novedad de Servicio", "Ha fallado la busqueda de la novedad: " +
-					oSelectedNovedad.IdNovedad);
-			});
-		},
+			AppManagementHelper.getModel("NovedadesFormJsonModel").setProperty("/", []);
+			this.NovedadesService.blockNovedad(oSelectedNovedad.IdNovedad)
+				.then(function (res) {
+					if (res.Usuario) {
+						MessageBoxHelper.showAlert(
+							"Novedad de Servicio",
+							`La novedad se encuentra bloqueada por: ${res.Usuario}`
+						);
+						return;
+					}
+					that.selectNovedad(oSelectedNovedad);
+				})
+				.catch(function (err) {
+					// eslint-disable-next-line no-console
+					console.error("Error al bloquear la novedad:", err);
+					MessageBoxHelper.showAlert(
+						"Novedad de Servicio",
+						`Ha fallado la búsqueda de la novedad: ${oSelectedNovedad.IdNovedad}`
+					);
+				});
+		}
+		,
 
 		selectNovedad: function (oSelectedNovedad) {
 			//var oSelectedNovedad = oEvent.getParameter("listItem").getBindingContext("NovedadesListJsonModel").getObject();
-			if (oSelectedNovedad.Consecuente != "") {
+			if (oSelectedNovedad.Consecuente !== "") {
 				this.closeDialog();
 				MessageBoxHelper.showAlert("Novedad de Servicio", "Esta novedad de servicio es consecuente de la Novedad Nro.: " +
 					oSelectedNovedad.Consecuente);
@@ -360,11 +391,13 @@ sap.ui.define(["Transener/Operaciones/NovedadesServicio/utils/AppManagementHelpe
 				oUtilsJsonModel.setProperty("/CammesaTab", false);
 			}
 			oUtilsJsonModel.setProperty("/IdNovedad", oSelectedNovedad.IdNovedad);
-			this.setNavigationPropertiesData(oSelectedNovedad);
+
 			MotivosService.loadModel(oSelectedNovedad.CodNovedad, oSelectedNovedad.Empresa);
 			CausasService.loadModel(oSelectedNovedad.CodNovedad, oSelectedNovedad.CodMotivo, oSelectedNovedad.Empresa);
-			EquiposService.loadEquipos(oSelectedNovedad.CodTipo, oSelectedNovedad.Estacion, oSelectedNovedad.Empresa);
+			//EquiposService.loadEquipos( oSelectedNovedad.Empresa,oSelectedNovedad.CodTipo, oSelectedNovedad.Estacion);
+			EquiposService.loadEquipos(oSelectedNovedad.CodTipo, oSelectedNovedad.Estacion, null, oSelectedNovedad.Empresa);
 			LicenciaService.loadList(oSelectedNovedad.Empresa, oSelectedNovedad.IdNovedad);
+			this.setNavigationPropertiesData(oSelectedNovedad);
 			oUtilsJsonModel.setProperty("/editable", false);
 			oUtilsJsonModel.setProperty("/editableDate", true);
 			oUtilsJsonModel.setProperty("/editableMode", true);

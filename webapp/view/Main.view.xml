@@ -36,6 +36,7 @@
 						<contentRight>
 							<Button icon="sap-icon://save" text="{ parts: [ 'UtilsJsonModel>/editableMode' ], formatter: '.formatName' }" type="Emphasized"
 								press="addOperation" visible="{UserDataModel>/oVisualizador}" class="buttonInverted"/>
+								 <Text text="V {UtilsJsonModel>/appVersion}" />
 						</contentRight>
 					</Bar>
 				</footer>
