@@ -466,12 +466,18 @@ sap.ui.define([
 			EstacionesService.loadEstaciones(this.society);
 			CausasService.loadAll(this.society);
 
-			if (this.society === "300") {
-				AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/GenIndisponibilidad", true);
-				AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/Vinculadost", true);
-				AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/Texto", "Vinculado y sin tensión.");
-				AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/CodDispAct", "NI");
-			}
+			// if (this.society === "300") {
+			// 	AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/GenIndisponibilidad", true);
+			// 	AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/Vinculadost", true);
+			// 	AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/Texto", "Vinculado y sin tensión.");
+			// 	AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/CodDispAct", "NI");
+			// }
+
+			AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/GenIndisponibilidad", true);
+			AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/Vinculadost", true);
+			AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/Texto", "Vinculado y sin tensión.");
+			AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/CodDispAct", "NI");
+
 		},
 
 		handleChangeIndis: function (oEvent) {
@@ -497,15 +503,17 @@ sap.ui.define([
 			AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/EntServicio", dDate);
 		},
 		handleTypeChange: function (oEvent) {
+			AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/Equnr", "");
+
 			var tipo = oEvent.getSource().getSelectedKey();
 			var estacion = AppManagementHelper.getModel("ConsecuentesFormJsonModel").getProperty("/Tplnr");
-			AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/Equnr", "");
+			var codigo = this.getView().byId("IUbic")?.getSelectedItem()?.getBindingContext("EstacionesJsonModel")?.getObject()?.Estacion; // Obtén el código de manera segura.
 
 			if (this.lineas.includes(tipo)) {
 				delete (AppManagementHelper.getModel("ConsecuentesFormJsonModel").getData().Tplnr);
 				EquiposService.loadEquipos(tipo, null, null, this.society, AppManagementHelper.getModel("EquiposConsecuentesJsonModel"));
 			} else if (tipo && estacion) {
-				EquiposService.loadEquipos(tipo, estacion, null, this.society, AppManagementHelper.getModel("EquiposConsecuentesJsonModel"));
+				EquiposService.loadEquipos(tipo, estacion, codigo, this.society, AppManagementHelper.getModel("EquiposConsecuentesJsonModel"));
 			}
 			var sValue = oEvent.getParameter("value");
 			AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/DescTipo", sValue);
@@ -615,15 +623,20 @@ sap.ui.define([
 			AppManagementHelper.getModel("NovedadesFormJsonModel").setProperty("/Equnr", "");
 
 
+
 			var consecuenteModel = AppManagementHelper.getModel("ConsecuentesFormJsonModel");
 			var novedadesModel = AppManagementHelper.getModel("NovedadesFormJsonModel");
-			//Paso la ubicacion a solapa consecuentes 
+			var equiposConsecuente = AppManagementHelper.getModel("EquiposConsecuentesJsonModel")
+			equiposConsecuente.setData({ Equipos: [] })
 			consecuenteModel.setProperty("/Tplnr", novedadesModel.getProperty("/Tplnr"));
+			consecuenteModel.setProperty("/CodTipo", "")
+			consecuenteModel.setProperty("/Equnr", "")
 
-			//Traigo los parametros para la busqueda de los Equipos.
+
 			var tipo = AppManagementHelper.getModel("NovedadesFormJsonModel").getProperty("/CodTipo");
 			var estacion = oEvent.getSource().getSelectedItem().getBindingContext("EstacionesJsonModel").getObject().Codigo;
 			var codigo = oEvent.getSource().getSelectedItem().getBindingContext("EstacionesJsonModel").getObject().Estacion;
+
 
 			if (this.lineas.includes(tipo)) {
 				EquiposService.loadEquipos(tipo, null, null, this.society);
@@ -1209,7 +1222,7 @@ sap.ui.define([
 
 		vinculadoChanged: function (evt) {
 			var isSelected = evt.getParameter("selected");
-			if (this.society === "300") {
+			if (this.society === "300" || this.society === "100") {
 				var consecuenteModel = AppManagementHelper.getModel("ConsecuentesFormJsonModel");
 				var comment = consecuenteModel.getProperty("/Texto");
 				var final = "";

@@ -15,11 +15,7 @@ sap.ui.define([
 		lineas: ["L1", "L2", "L3", "L4", "L5", "L6", "L9"],
 
 		loadEquipos: function (tipo, estacion, codigo, empresa, model) {
-			AppManagementHelper.getModel("EquiposJsonModel").setData({
-				Busy: true,
-				Equipos: []
-			});
-			var aFilter = [
+					var aFilter = [
 				new sap.ui.model.Filter("IEmpresa", sap.ui.model.FilterOperator.EQ, empresa),
 				new sap.ui.model.Filter("IEqart", sap.ui.model.FilterOperator.EQ, tipo)
 			];
@@ -62,18 +58,14 @@ sap.ui.define([
 				});
 			} else {
 				AppManagementHelper.getModel("EquiposJsonModel").setData({
-					Busy: false,
-					Equipos: aData
+									Equipos: aData
 				});
 			}
 
 		},
 
 		errorGetEquipos: function (error) {
-			AppManagementHelper.getModel("EquiposJsonModel").setData({
-				Busy: false,
-				Equipos: []
-			});
+		
 			console.log("Error al cargar Equipos", error);
 		}
 

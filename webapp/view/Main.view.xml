@@ -612,7 +612,7 @@
 																<ComboBox enabled="{parts: ['ConsecuentesFormJsonModel>/CodTipo'], formatter: '.isUbicacionEditableConsecuentes'}"
 																	editable="{UserDataModel>/oVisualizador}" items="{EstacionesJsonModel>/Estaciones}" class="sapUiSmallMarginEnd"
 																	change="changeUbicacionConsecuentes" width="340px" valueState="{ConsecuentesFormJsonModel>/TplnrState}"
-																	valueStateText="{ConsecuentesFormJsonModel>/TplnrStateMessage}" selectedKey="{ConsecuentesFormJsonModel>/Tplnr}" app:inputId="IUbic">
+																	valueStateText="{ConsecuentesFormJsonModel>/TplnrStateMessage}" selectedKey="{ConsecuentesFormJsonModel>/Tplnr}" app:inputId="IUbic" id="IUbic">
 																	<core:Item key="{EstacionesJsonModel>Codigo}" text="{EstacionesJsonModel>Descripcion}"/>
 																</ComboBox>
 															</items>
