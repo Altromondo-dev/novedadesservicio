@@ -282,7 +282,7 @@
 																	<FlexItemData growFactor="1"/>
 																</layoutData>
 															</Label>
-															<ComboBox change="onChangeMotivo" valueState="{NovedadesFormJsonModel>/CodMotivoState}" editable="{UserDataModel>/oVisualizador}"
+															<ComboBox change="onChangeMotivo" id="ComboMotivo" valueState="{NovedadesFormJsonModel>/CodMotivoState}" editable="{UserDataModel>/oVisualizador}"
 																valueStateText="{NovedadesFormJsonModel>/CodMotivoStateMessage}" items="{ path: 'MotivosJsonModel>/Motivos'}" width="80px"
 																selectedKey="{NovedadesFormJsonModel>/CodMotivo}" app:inputId="NMotivo">
 																<core:Item key="{MotivosJsonModel>CodigoMotivo}" text="{MotivosJsonModel>CodigoMotivo}"/>
@@ -292,8 +292,10 @@
 															</ComboBox>
 															<ComboBox change="onChangeMotivo" valueState="{NovedadesFormJsonModel>/CodMotivoState}" editable="{UserDataModel>/oVisualizador}"
 																valueStateText="{NovedadesFormJsonModel>/CodMotivoStateMessage}" selectedKey="{NovedadesFormJsonModel>/CodMotivo}"
-																items="{ path: 'MotivosJsonModel>/Motivos'}" width="100%" app:inputId="NMotivo">
-																<core:Item key="{MotivosJsonModel>CodigoMotivo}" text="{MotivosJsonModel>DescMotivo}"/>
+																items="{ path: 'MotivosJsonModel>/Motivos'}" width="100%"  app:inputId="NMotivo"
+																	showSecondaryValues= "true">
+																<!-- <core:Item key="{MotivosJsonModel>CodigoMotivo}" text="{MotivosJsonModel>DescMotivo}"/> -->
+																<core:ListItem key="{MotivosJsonModel>CodigoMotivo}" text="{MotivosJsonModel>DescMotivo}" additionalText = "{MotivosJsonModel>CodigoMotivo}"/>
 																<layoutData>
 																	<FlexItemData growFactor="10"/>
 																</layoutData>

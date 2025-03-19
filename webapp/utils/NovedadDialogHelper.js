@@ -396,7 +396,7 @@ sap.ui.define(["Transener/Operaciones/NovedadesServicio/utils/AppManagementHelpe
 			CausasService.loadModel(oSelectedNovedad.CodNovedad, oSelectedNovedad.CodMotivo, oSelectedNovedad.Empresa);
 			//EquiposService.loadEquipos( oSelectedNovedad.Empresa,oSelectedNovedad.CodTipo, oSelectedNovedad.Estacion);
 			EquiposService.loadEquipos(oSelectedNovedad.CodTipo, oSelectedNovedad.Estacion, null, oSelectedNovedad.Empresa);
-			LicenciaService.loadList(oSelectedNovedad.Empresa, oSelectedNovedad.IdNovedad);
+			
 			this.setNavigationPropertiesData(oSelectedNovedad);
 			oUtilsJsonModel.setProperty("/editable", false);
 			oUtilsJsonModel.setProperty("/editableDate", true);
@@ -404,6 +404,7 @@ sap.ui.define(["Transener/Operaciones/NovedadesServicio/utils/AppManagementHelpe
 			oUtilsJsonModel.setProperty("/visible", false);
 			oUtilsJsonModel.setProperty("/Referencia", oSelectedNovedad.IdNovedad);
 			this.checkRadioEnabled();
+			LicenciaService.loadList(oSelectedNovedad.Empresa, oSelectedNovedad.IdNovedad);
 			this.closeDialog();
 		},
 

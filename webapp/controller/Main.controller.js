@@ -113,7 +113,7 @@ sap.ui.define([
 					return null;
 				}
 			}
-	
+
 		},
 		loadUserDataModel: function (callback) {
 
@@ -478,7 +478,7 @@ sap.ui.define([
 
 			var tipo = oEvent.getSource().getSelectedKey();
 			var estacion = AppManagementHelper.getModel("ConsecuentesFormJsonModel").getProperty("/Tplnr");
-			var codigo = this.getView().byId("IUbic")?.getSelectedItem()?.getBindingContext("EstacionesJsonModel")?.getObject()?.Estacion; // Obtén el código de manera segura.
+			var codigo = this.getView().byId("IUbic")?.getSelectedItem()?.getBindingContext("EstacionesJsonModel")?.getObject()?.Estacion
 
 			if (this.lineas.includes(tipo)) {
 				delete (AppManagementHelper.getModel("ConsecuentesFormJsonModel").getData().Tplnr);
@@ -875,6 +875,15 @@ sap.ui.define([
 			var codNovedad = AppManagementHelper.getModel("NovedadesFormJsonModel").getProperty("/CodNovedad");
 			AppManagementHelper.getModel("NovedadesFormJsonModel").setProperty("/CodCausa", "");
 			var codMotivo = evt.getSource().getSelectedKey();
+			var oModel = this.getView().getModel("NovedadesFormJsonModel");
+
+			// 🔹 Si el valor es el mismo, primero limpiamos y luego asignamos
+			if (oModel.getProperty("/CodMotivo") === sSelectedKey) {
+				oModel.setProperty("/CodMotivo", "");  // Asigna un valor temporal
+				oModel.refresh(true);
+			}
+
+			oModel.setProperty("/CodMotivo", sSelectedKey);
 			if (codNovedad == "P" && codMotivo == "19" || codNovedad == "P" && codMotivo == "7")
 				AppManagementHelper.getModel("UtilsJsonModel").setProperty("/enabledRadio", true);
 			CausasService.loadModel(codNovedad, codMotivo, this.society);
@@ -5784,6 +5793,7 @@ sap.ui.define([
 				strId = "0" + strId;
 			}
 			AppManagementHelper.getModel("NovedadesFormJsonModel").setProperty("/", []);
+			this.getView().byId("ComboMotivo").setSelectedKey("0")
 			NovedadesService.blockNovedad(strId).then(function (res) {
 				if (res.Usuario) {
 					MessageBoxHelper.showAlert("Novedad de Servicio", "La novedad se encuentra bloqueada por: " +
@@ -5813,6 +5823,7 @@ sap.ui.define([
 			)
 		},
 		onSuccessLoadCallback: function (oSelectedNovedad) {
+
 			if (!oSelectedNovedad.IdNovedad) {
 				MessageBoxHelper.showAlert("Novedad de Servicio", "Esta novedad no existe.")
 				return;
@@ -5832,19 +5843,70 @@ sap.ui.define([
 					oUtilsJsonModel.setProperty("/CammesaTab", false);
 				}
 				oUtilsJsonModel.setProperty("/IdNovedad", oSelectedNovedad.IdNovedad);
+				this.setNavigationPropertiesData(oSelectedNovedad);
 				MotivosService.loadModel(oSelectedNovedad.CodNovedad, oSelectedNovedad.Empresa);
 				CausasService.loadModel(oSelectedNovedad.CodNovedad, oSelectedNovedad.CodMotivo, oSelectedNovedad.Empresa);
 				EquiposService.loadEquipos(oSelectedNovedad.CodTipo, oSelectedNovedad.Estacion, null, oSelectedNovedad.Empresa);
 				LicenciaService.loadList(oSelectedNovedad.Empresa, oSelectedNovedad.IdNovedad);
-				this.setNavigationPropertiesData(oSelectedNovedad);
+
+
+	
+
+
 				oUtilsJsonModel.setProperty("/editable", false);
 				oUtilsJsonModel.setProperty("/editableMode", true);
 				oUtilsJsonModel.setProperty("/editableDate", true);
 				oUtilsJsonModel.setProperty("/visible", false);
 				oUtilsJsonModel.setProperty("/Referencia", oSelectedNovedad.IdNovedad);
 				NovedadDialogHelper.checkRadioEnabled();
+				
 			}
 		},
+		// onSuccessLoadCallback: function (oSelectedNovedad) {
+		// 	if (!oSelectedNovedad.IdNovedad) {
+		// 		MessageBoxHelper.showAlert("Novedad de Servicio", "Esta novedad no existe.");
+		// 		return;
+		// 	}
+
+		// 	if (oSelectedNovedad.Consecuente !== "") {
+		// 		MessageBoxHelper.showAlert("Novedad de Servicio",
+		// 			"Esta novedad de servicio es consecuente de la Novedad Nro.: " + oSelectedNovedad.Consecuente);
+		// 		return;
+		// 	}
+
+		// 	var oUtilsJsonModel = this.getView().getModel("UtilsJsonModel");
+		// 	var codNovedad = oSelectedNovedad.CodNovedad;
+
+		// 	oUtilsJsonModel.setProperty("/CammesaTab", codNovedad !== "C" && codNovedad !== "I");
+		// 	oUtilsJsonModel.setProperty("/IdNovedad", oSelectedNovedad.IdNovedad);
+		// 	oUtilsJsonModel.setProperty("/editable", false);
+		// 	oUtilsJsonModel.setProperty("/editableMode", true);
+		// 	oUtilsJsonModel.setProperty("/editableDate", true);
+		// 	oUtilsJsonModel.setProperty("/visible", false);
+		// 	oUtilsJsonModel.setProperty("/Referencia", oSelectedNovedad.IdNovedad);
+
+		// 	// Ejecutar primero los servicios
+		// 	Promise.all([
+		// 		this.setNavigationPropertiesData(oSelectedNovedad),
+		// 		LicenciaService.loadList(oSelectedNovedad.Empresa, oSelectedNovedad.IdNovedad)
+		// 	])
+		// 		.then(() => {
+		// 			// Luego ejecutar setNavigationPropertiesData
+		// 				MotivosService.loadModel(oSelectedNovedad.CodNovedad, oSelectedNovedad.Empresa),
+		// 				CausasService.loadModel(oSelectedNovedad.CodNovedad, oSelectedNovedad.CodMotivo, oSelectedNovedad.Empresa),
+		// 				EquiposService.loadEquipos(oSelectedNovedad.CodTipo, oSelectedNovedad.Estacion, null, oSelectedNovedad.Empresa)
+		// 		})
+		// 		.then(() => {
+		// 			// Finalmente, validar los radios después de setNavigationPropertiesData
+		// 			NovedadDialogHelper.checkRadioEnabled();
+		// 		})
+		// 		.catch(error => {
+		// 			console.error("Error en onSuccessLoadCallback:", error);
+		// 		});
+
+		// 	AppManagementHelper.getModel("MotivosJsonModel").refresh(true);
+		// },
+
 		onErrorLoadCallback: function () {
 
 		},
