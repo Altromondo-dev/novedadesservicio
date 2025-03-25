@@ -292,15 +292,13 @@
 															</ComboBox>
 															<ComboBox change="onChangeMotivo" valueState="{NovedadesFormJsonModel>/CodMotivoState}" editable="{UserDataModel>/oVisualizador}"
 																valueStateText="{NovedadesFormJsonModel>/CodMotivoStateMessage}" selectedKey="{NovedadesFormJsonModel>/CodMotivo}"
-																items="{ path: 'MotivosJsonModel>/Motivos'}" width="100%"  app:inputId="NMotivo"
-																	showSecondaryValues= "true">
-																<!-- <core:Item key="{MotivosJsonModel>CodigoMotivo}" text="{MotivosJsonModel>DescMotivo}"/> -->
-																<core:ListItem key="{MotivosJsonModel>CodigoMotivo}" text="{MotivosJsonModel>DescMotivo}" additionalText = "{MotivosJsonModel>CodigoMotivo}"/>
+																items="{ path: 'MotivosJsonModel>/Motivos'}" width="100%"  app:inputId="NMotivo">
+																<core:Item key="{MotivosJsonModel>CodigoMotivo}" text="{MotivosJsonModel>DescMotivo}"/>
 																<layoutData>
 																	<FlexItemData growFactor="10"/>
 																</layoutData>
 															</ComboBox>
-														</items>
+																										</items>
 													</FlexBox>
 													<FlexBox alignItems="Start" width="100%">
 														<items>
@@ -587,14 +585,14 @@
 																		<FlexItemData growFactor="1"/>
 																	</layoutData>
 																</Label>
-																<ComboBox items="{TipoEquipoJsonModel>/TipoEquipo}" class="sapUiTinyMarginEnd" editable="{UserDataModel>/oVisualizador}"
+																<ComboBox id="ConsequentType" items="{TipoEquipoJsonModel>/TipoEquipo}" class="sapUiTinyMarginEnd" editable="{UserDataModel>/oVisualizador}"
 																	change="handleTypeChange" width="180px" valueState="{ConsecuentesFormJsonModel>/CodTipoState}"
-																	valueStateText="{ConsecuentesFormJsonModel>/CodTipoStateMessage}" selectedKey="{ConsecuentesFormJsonModel>/CodTipo}" app:inputId="NTipo">
+																	valueStateText="{ConsecuentesFormJsonModel>/CodTipoStateMessage}" selectedKey="{ConsecuentesFormJsonModel>/CodTipo}" >
 																	<core:Item key="{TipoEquipoJsonModel>Tipo}" text="{TipoEquipoJsonModel>Tipo}"/>
 																</ComboBox>
-																<ComboBox items="{TipoEquipoJsonModel>/TipoEquipo}" class="sapUiSmallMarginEnd" editable="{UserDataModel>/oVisualizador}"
+																<ComboBox id="ConsequentType2" items="{TipoEquipoJsonModel>/TipoEquipo}" class="sapUiSmallMarginEnd" editable="{UserDataModel>/oVisualizador}"
 																	change="handleTypeChange" width="340px" valueState="{ConsecuentesFormJsonModel>/CodTipoState}"
-																	valueStateText="{ConsecuentesFormJsonModel>/CodTipoStateMessage}" selectedKey="{ConsecuentesFormJsonModel>/CodTipo}" app:inputId="NTipo">
+																	valueStateText="{ConsecuentesFormJsonModel>/CodTipoStateMessage}" selectedKey="{ConsecuentesFormJsonModel>/CodTipo}" >
 																	<core:Item key="{TipoEquipoJsonModel>Tipo}" text="{TipoEquipoJsonModel>Descripcion}"/>
 																</ComboBox>
 															</items>
@@ -606,16 +604,16 @@
 																		<FlexItemData growFactor="1"/>
 																	</layoutData>
 																</Label>
-																<ComboBox enabled="{parts: ['ConsecuentesFormJsonModel>/CodTipo'], formatter: '.isUbicacionEditableConsecuentes'}"
+																<ComboBox id="ConsequentUbicacion" enabled="{parts: ['ConsecuentesFormJsonModel>/CodTipo'], formatter: '.isUbicacionEditableConsecuentes'}"
 																	editable="{UserDataModel>/oVisualizador}" change="changeUbicacionConsecuentes" class="sapUiTinyMarginEnd"
 																	items="{EstacionesJsonModel>/Estaciones}" width="180px" valueState="{ConsecuentesFormJsonModel>/TplnrState}"
-																	valueStateText="{ConsecuentesFormJsonModel>/TplnrStateMessage}" selectedKey="{ConsecuentesFormJsonModel>/Tplnr}" app:inputId="NTipo">
+																	valueStateText="{ConsecuentesFormJsonModel>/TplnrStateMessage}" selectedKey="{ConsecuentesFormJsonModel>/Tplnr}" >
 																	<core:Item key="{EstacionesJsonModel>Codigo}" text="{EstacionesJsonModel>Codigo}"/>
 																</ComboBox>
-																<ComboBox enabled="{parts: ['ConsecuentesFormJsonModel>/CodTipo'], formatter: '.isUbicacionEditableConsecuentes'}"
+																<ComboBox id="ConsequentUbicacion2" enabled="{parts: ['ConsecuentesFormJsonModel>/CodTipo'], formatter: '.isUbicacionEditableConsecuentes'}"
 																	editable="{UserDataModel>/oVisualizador}" items="{EstacionesJsonModel>/Estaciones}" class="sapUiSmallMarginEnd"
 																	change="changeUbicacionConsecuentes" width="340px" valueState="{ConsecuentesFormJsonModel>/TplnrState}"
-																	valueStateText="{ConsecuentesFormJsonModel>/TplnrStateMessage}" selectedKey="{ConsecuentesFormJsonModel>/Tplnr}" app:inputId="IUbic" id="IUbic">
+																	valueStateText="{ConsecuentesFormJsonModel>/TplnrStateMessage}" selectedKey="{ConsecuentesFormJsonModel>/Tplnr}" >
 																	<core:Item key="{EstacionesJsonModel>Codigo}" text="{EstacionesJsonModel>Descripcion}"/>
 																</ComboBox>
 															</items>
