@@ -375,6 +375,7 @@ sap.ui.define(["Transener/Operaciones/NovedadesServicio/utils/AppManagementHelpe
 		,
 
 		selectNovedad: function (oSelectedNovedad) {
+			var oView = sap.ui.getCore().getModel("viewModel")
 			//var oSelectedNovedad = oEvent.getParameter("listItem").getBindingContext("NovedadesListJsonModel").getObject();
 			if (oSelectedNovedad.Consecuente !== "") {
 				this.closeDialog();
@@ -392,17 +393,20 @@ sap.ui.define(["Transener/Operaciones/NovedadesServicio/utils/AppManagementHelpe
 			}
 			oUtilsJsonModel.setProperty("/IdNovedad", oSelectedNovedad.IdNovedad);
 
+
+
 			Promise.all([
 				MotivosService.loadModel(oSelectedNovedad.CodNovedad, oSelectedNovedad.Empresa),
 				CausasService.loadModel(oSelectedNovedad.CodNovedad, oSelectedNovedad.CodMotivo, oSelectedNovedad.Empresa),
-				EquiposService.loadEquipos(oSelectedNovedad.CodTipo, oSelectedNovedad.Estacion, null, oSelectedNovedad.Empresa),
 				LicenciaService.loadList(oSelectedNovedad.Empresa, oSelectedNovedad.IdNovedad)
 			]).then(() => {
 				this.setNavigationPropertiesData(oSelectedNovedad);
+				var codigo = oView.byId("IUbic")?.getSelectedItem()?.getBindingContext("EstacionesJsonModel")?.getObject()?.Estacion
+				EquiposService.loadEquipos(oSelectedNovedad.CodTipo, oSelectedNovedad.Tplnr, codigo, oSelectedNovedad.Empresa)
 			}).catch(error => {
 				console.error("Error al cargar los servicios:", error);
 			});
-		
+
 			oUtilsJsonModel.setProperty("/editable", false);
 			oUtilsJsonModel.setProperty("/editableDate", true);
 			oUtilsJsonModel.setProperty("/editableMode", true);

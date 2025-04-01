@@ -129,7 +129,7 @@
 																	<FlexItemData growFactor="1"/>
 																</layoutData>
 															</Label>
-															<ComboBox enabled="{parts: ['UtilsJsonModel>/editable', 'NovedadesFormJsonModel>/CodTipo', 'UserDataModel>/viewEquipos'], formatter: '.isUbicacionEditable'}"
+															<ComboBox  id="IUbic" enabled="{parts: ['UtilsJsonModel>/editable', 'NovedadesFormJsonModel>/CodTipo', 'UserDataModel>/viewEquipos'], formatter: '.isUbicacionEditable'}"
 																editable="{UserDataModel>/oVisualizador}" change="changeUbicacion" valueState="{NovedadesFormJsonModel>/TplnrState}"
 																valueStateText="{NovedadesFormJsonModel>/TplnrStateMessage}" items="{EstacionesJsonModel>/Estaciones}" width="160px"
 																selectedKey="{NovedadesFormJsonModel>/Tplnr}" app:inputId="NUbicacion">

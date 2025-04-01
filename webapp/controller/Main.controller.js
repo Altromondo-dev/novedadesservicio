@@ -100,7 +100,7 @@ sap.ui.define([
 
 		onInit: function () {
 
-
+			sap.ui.getCore().setModel(this.getView(), "viewModel")
 
 			var cUrl = this.getBaseURL();
 			this.loadUserDataModel();
@@ -5855,16 +5855,18 @@ sap.ui.define([
 					oUtilsJsonModel.setProperty("/CammesaTab", false);
 				}
 				oUtilsJsonModel.setProperty("/IdNovedad", oSelectedNovedad.IdNovedad);
-
+			
 				Promise.all([
 					MotivosService.loadModel(oSelectedNovedad.CodNovedad, oSelectedNovedad.Empresa),
 					CausasService.loadModel(oSelectedNovedad.CodNovedad, oSelectedNovedad.CodMotivo, oSelectedNovedad.Empresa),
-					EquiposService.loadEquipos(oSelectedNovedad.CodTipo, oSelectedNovedad.Estacion, null, oSelectedNovedad.Empresa),
+
 					LicenciaService.loadList(oSelectedNovedad.Empresa, oSelectedNovedad.IdNovedad)
 				]).then(() => {
-					setTimeout(() => {
-						this.setNavigationPropertiesData(oSelectedNovedad);
-					}, 500);
+
+					this.setNavigationPropertiesData(oSelectedNovedad);
+					var codigo = this.getView().byId("IUbic")?.getSelectedItem()?.getBindingContext("EstacionesJsonModel")?.getObject()?.Estacion
+					EquiposService.loadEquipos(oSelectedNovedad.CodTipo, oSelectedNovedad.Tplnr, codigo, oSelectedNovedad.Empresa)
+
 				}).catch(error => {
 					console.error("Error al cargar los servicios:", error);
 				});
