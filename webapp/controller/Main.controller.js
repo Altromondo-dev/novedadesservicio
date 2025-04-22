@@ -5914,11 +5914,14 @@ sap.ui.define([
 			consecuenteModel.setProperty("/InformaCammesa", cammesaModel.getProperty("/InformaCammesa"));
 			consecuenteModel.setProperty("/FechaHora", cammesaModel.getProperty("/FechaHora"));
 			this.addConsecuente = true;
-			this._forceComboRefresh("ComboMotivo",novedadesModel.getProperty("/CodMotivo") )
-			this._forceComboRefresh("ComboMotivo2",novedadesModel.getProperty("/CodMotivo") )
-			this._forceComboRefresh("ComboCausa",novedadesModel.getProperty("/CodCausa") )
-			this._forceComboRefresh("ComboCausa2",novedadesModel.getProperty("/CodCausa") )
-			
+
+			//FIX GQ actualizar forzado cuando el change no se ejecuta por ser mismo key 
+
+			this._forceComboRefresh("ComboMotivo", novedadesModel.getProperty("/CodMotivo"))
+			this._forceComboRefresh("ComboMotivo2", novedadesModel.getProperty("/CodMotivo"))
+			this._forceComboRefresh("ComboCausa", novedadesModel.getProperty("/CodCausa"))
+			this._forceComboRefresh("ComboCausa2", novedadesModel.getProperty("/CodCausa"))
+
 		},
 		onSelectReporte: function (evt) {
 			var Reporte = evt.getSource().getSelectedKey()
@@ -5927,8 +5930,8 @@ sap.ui.define([
 		_forceComboRefresh: function (sComboId, sSelectedKey) {
 			var oCombo = this.getView().byId(sComboId);
 			if (oCombo) {
-				oCombo.setSelectedKey(""); 
-				oCombo.getBinding("items").refresh(); 
+				oCombo.setSelectedKey("");
+				oCombo.getBinding("items").refresh();
 
 				setTimeout(() => {
 					oCombo.setSelectedKey(sSelectedKey);
