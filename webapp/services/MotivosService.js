@@ -1,5 +1,5 @@
 sap.ui.define([
-    //helpers
+    // helpers
     "Transener/Operaciones/NovedadesServicio/utils/FioriHelper",
     "Transener/Operaciones/NovedadesServicio/utils/FioriComponentHelper",
     "Transener/Operaciones/NovedadesServicio/utils/FormatHelper",
@@ -7,7 +7,15 @@ sap.ui.define([
     "Transener/Operaciones/NovedadesServicio/utils/MessageBoxHelper",
     "Transener/Operaciones/NovedadesServicio/services/oDataService",
     "Transener/Operaciones/NovedadesServicio/utils/AppManagementHelper"
-], function(FioriHelper, FioriComponentHelper, FormatHelper, i18nTranslationHelper, MessageBoxHelper, oDataService, AppManagementHelper) {
+], function(
+    FioriHelper,
+    FioriComponentHelper,
+    FormatHelper,
+    i18nTranslationHelper,
+    MessageBoxHelper,
+    oDataService,
+    AppManagementHelper
+) {
     "use strict";
 
     return {
@@ -33,13 +41,9 @@ sap.ui.define([
 
         _readODataOnSuccess: function(data) {
             var aData = FormatHelper.removeResults(data);
-            var oModel = AppManagementHelper.getModel("MotivosJsonModel");
-
-            oModel.setData({
+            AppManagementHelper.getModel("MotivosJsonModel").setData({
                 Motivos: aData
             });
-
-            oModel.refresh(true); // 🔹 Forzar actualización en la UI
         },
 
         _readODataOnError: function(error) {
@@ -70,15 +74,23 @@ sap.ui.define([
         },
 
         loadModel: function(codNovedad, empresa) {
-            var filters = [
-                new sap.ui.model.Filter("CodigoNovedad", sap.ui.model.FilterOperator.EQ, codNovedad),
-                new sap.ui.model.Filter("Empresa", sap.ui.model.FilterOperator.EQ, empresa)
-            ];
+            return new Promise((resolve, reject) => {
+                var filters = [
+                    new sap.ui.model.Filter("CodigoNovedad", sap.ui.model.FilterOperator.EQ, codNovedad),
+                    new sap.ui.model.Filter("Empresa", sap.ui.model.FilterOperator.EQ, empresa)
+                ];
 
-            oDataService.getModel("TransenerOperaciones").read("/MotivosSet", {
-                filters: filters,
-                success: $.proxy(this._readODataOnSuccess, this),
-                error: $.proxy(this._readODataOnError, this)
+                oDataService.getModel("TransenerOperaciones").read("/MotivosSet", {
+                    filters: filters,
+                    success: (data) => {
+                        this._readODataOnSuccess(data);
+                        resolve(data);
+                    },
+                    error: (error) => {
+                        this._readODataOnError(error);
+                        reject(error);
+                    }
+                });
             });
         }
     };

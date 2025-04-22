@@ -872,9 +872,12 @@ sap.ui.define([
 
 		onChangeMotivo: function (evt) {
 			NovedadDialogHelper.checkRadioEnabled();
+
 			var codNovedad = AppManagementHelper.getModel("NovedadesFormJsonModel").getProperty("/CodNovedad");
+
 			AppManagementHelper.getModel("NovedadesFormJsonModel").setProperty("/CodCausa", "");
-			var codMotivo = evt.getSource().getSelectedKey();
+
+			var codMotivo = this.byId("ComboMotivo").getSelectedKey()
 			var oModel = this.getView().getModel("NovedadesFormJsonModel");
 
 			// 🔹 Si el valor es el mismo, primero limpiamos y luego asignamos
@@ -5789,35 +5792,33 @@ sap.ui.define([
 		},
 		onSearchNovedad: function () {
 
-
-			var that = this;
 			var oModel = this.getView().getModel("UtilsJsonModel");
 			var data = {
 				NroNovedad: oModel.getProperty("/nroNovedad"),
 				Empresa: oModel.getProperty("/Empresa")
-			}
+			};
+
 			if (!data.NroNovedad) {
-				MessageBoxHelper.showAlert("Novedad de Servicio", "Debe indicar un número de novedad.")
+				MessageBoxHelper.showAlert("Novedad de Servicio", "Debe indicar un número de novedad.");
 				return;
 			}
+
 			var strId = data.NroNovedad;
-			var k = strId.length;
-			for (var i = 10; i > k; i--) {
+			while (strId.length < 10) {
 				strId = "0" + strId;
 			}
-			AppManagementHelper.getModel("NovedadesFormJsonModel").setProperty("/", []);
-			NovedadesService.blockNovedad(strId).then(function (res) {
+
+			NovedadesService.blockNovedad(strId).then((res) => {
 				if (res.Usuario) {
-					MessageBoxHelper.showAlert("Novedad de Servicio", "La novedad se encuentra bloqueada por: " +
-						res.Usuario);
+					MessageBoxHelper.showAlert("Novedad de Servicio", "La novedad se encuentra bloqueada por: " + res.Usuario);
 					return;
 				}
-				that.onSearchNovedadUnblocked.bind(that)();
-			}, function (err) {
-				MessageBoxHelper.showAlert("Novedad de Servicio", "Ha fallado la busqueda de la novedad: " +
-					data.NroNovedad);
+				this.onSearchNovedadUnblocked();
+			}).catch((err) => {
+				MessageBoxHelper.showAlert("Novedad de Servicio", "Ha fallado la búsqueda de la novedad: " + data.NroNovedad);
 			});
 		},
+
 		onSearchNovedadUnblocked: function () {
 
 			var oModel = this.getView().getModel("UtilsJsonModel");
@@ -5835,96 +5836,41 @@ sap.ui.define([
 			)
 		},
 		onSuccessLoadCallback: function (oSelectedNovedad) {
-
 			if (!oSelectedNovedad.IdNovedad) {
-				MessageBoxHelper.showAlert("Novedad de Servicio", "Esta novedad no existe.")
+				MessageBoxHelper.showAlert("Novedad de Servicio", "Esta novedad no existe.");
 				return;
 			}
-			if (oSelectedNovedad.Consecuente != "") {
-				MessageBoxHelper.showAlert("Novedad de Servicio", "Esta novedad de servicio es consecuente de la Novedad Nro.: " +
-					oSelectedNovedad.Consecuente)
-			} else {
-				/*var novedad = AppManagementHelper.getModel("NovedadesFormJsonModel").getData();
-					NovedadesService.unblockNovedad(novedad.IdNovedad);*/
 
+			if (oSelectedNovedad.Consecuente !== "") {
+				MessageBoxHelper.showAlert("Novedad de Servicio", "Esta novedad de servicio es consecuente de la Novedad Nro.: " +
+					oSelectedNovedad.Consecuente);
+			} else {
 				var oUtilsJsonModel = this.getView().getModel("UtilsJsonModel");
 				var codNovedad = oSelectedNovedad.CodNovedad;
-				if (codNovedad !== "C" && codNovedad !== "I") {
-					oUtilsJsonModel.setProperty("/CammesaTab", true);
-				} else {
-					oUtilsJsonModel.setProperty("/CammesaTab", false);
-				}
+
+				oUtilsJsonModel.setProperty("/CammesaTab", codNovedad !== "C" && codNovedad !== "I");
 				oUtilsJsonModel.setProperty("/IdNovedad", oSelectedNovedad.IdNovedad);
-			
+				var codigo = this.getView().byId("IUbic")?.getSelectedItem()?.getBindingContext("EstacionesJsonModel")?.getObject()?.Estacion
+				// Llamadas asincrónicas
 				Promise.all([
 					MotivosService.loadModel(oSelectedNovedad.CodNovedad, oSelectedNovedad.Empresa),
 					CausasService.loadModel(oSelectedNovedad.CodNovedad, oSelectedNovedad.CodMotivo, oSelectedNovedad.Empresa),
-
+					EquiposService.loadEquipos(oSelectedNovedad.CodTipo, oSelectedNovedad.Tplnr, codigo, oSelectedNovedad.Empresa),
 					LicenciaService.loadList(oSelectedNovedad.Empresa, oSelectedNovedad.IdNovedad)
 				]).then(() => {
-
 					this.setNavigationPropertiesData(oSelectedNovedad);
-					var codigo = this.getView().byId("IUbic")?.getSelectedItem()?.getBindingContext("EstacionesJsonModel")?.getObject()?.Estacion
-					EquiposService.loadEquipos(oSelectedNovedad.CodTipo, oSelectedNovedad.Tplnr, codigo, oSelectedNovedad.Empresa)
-
-				}).catch(error => {
-					console.error("Error al cargar los servicios:", error);
+					oUtilsJsonModel.setProperty("/editable", false);
+					oUtilsJsonModel.setProperty("/editableMode", true);
+					oUtilsJsonModel.setProperty("/editableDate", true);
+					oUtilsJsonModel.setProperty("/visible", false);
+					oUtilsJsonModel.setProperty("/Referencia", oSelectedNovedad.IdNovedad);
+					NovedadDialogHelper.checkRadioEnabled();
+				}).catch((oError) => {
+					console.error("Error cargando datos de novedad:", oError);
+					MessageBoxHelper.showAlert("Error", "Ocurrió un error al cargar la información relacionada a la novedad.");
 				});
-
-
-				oUtilsJsonModel.setProperty("/editable", false);
-				oUtilsJsonModel.setProperty("/editableMode", true);
-				oUtilsJsonModel.setProperty("/editableDate", true);
-				oUtilsJsonModel.setProperty("/visible", false);
-				oUtilsJsonModel.setProperty("/Referencia", oSelectedNovedad.IdNovedad);
-				NovedadDialogHelper.checkRadioEnabled();
-
 			}
 		},
-		// onSuccessLoadCallback: function (oSelectedNovedad) {
-		// 	if (!oSelectedNovedad.IdNovedad) {
-		// 		MessageBoxHelper.showAlert("Novedad de Servicio", "Esta novedad no existe.");
-		// 		return;
-		// 	}
-
-		// 	if (oSelectedNovedad.Consecuente !== "") {
-		// 		MessageBoxHelper.showAlert("Novedad de Servicio",
-		// 			"Esta novedad de servicio es consecuente de la Novedad Nro.: " + oSelectedNovedad.Consecuente);
-		// 		return;
-		// 	}
-
-		// 	var oUtilsJsonModel = this.getView().getModel("UtilsJsonModel");
-		// 	var codNovedad = oSelectedNovedad.CodNovedad;
-
-		// 	oUtilsJsonModel.setProperty("/CammesaTab", codNovedad !== "C" && codNovedad !== "I");
-		// 	oUtilsJsonModel.setProperty("/IdNovedad", oSelectedNovedad.IdNovedad);
-		// 	oUtilsJsonModel.setProperty("/editable", false);
-		// 	oUtilsJsonModel.setProperty("/editableMode", true);
-		// 	oUtilsJsonModel.setProperty("/editableDate", true);
-		// 	oUtilsJsonModel.setProperty("/visible", false);
-		// 	oUtilsJsonModel.setProperty("/Referencia", oSelectedNovedad.IdNovedad);
-
-		// 	// Ejecutar primero los servicios
-		// 	Promise.all([
-		// 		this.setNavigationPropertiesData(oSelectedNovedad),
-		// 		LicenciaService.loadList(oSelectedNovedad.Empresa, oSelectedNovedad.IdNovedad)
-		// 	])
-		// 		.then(() => {
-		// 			// Luego ejecutar setNavigationPropertiesData
-		// 				MotivosService.loadModel(oSelectedNovedad.CodNovedad, oSelectedNovedad.Empresa),
-		// 				CausasService.loadModel(oSelectedNovedad.CodNovedad, oSelectedNovedad.CodMotivo, oSelectedNovedad.Empresa),
-		// 				EquiposService.loadEquipos(oSelectedNovedad.CodTipo, oSelectedNovedad.Estacion, null, oSelectedNovedad.Empresa)
-		// 		})
-		// 		.then(() => {
-		// 			// Finalmente, validar los radios después de setNavigationPropertiesData
-		// 			NovedadDialogHelper.checkRadioEnabled();
-		// 		})
-		// 		.catch(error => {
-		// 			console.error("Error en onSuccessLoadCallback:", error);
-		// 		});
-
-		// 	AppManagementHelper.getModel("MotivosJsonModel").refresh(true);
-		// },
 
 		onErrorLoadCallback: function () {
 
@@ -5968,11 +5914,28 @@ sap.ui.define([
 			consecuenteModel.setProperty("/InformaCammesa", cammesaModel.getProperty("/InformaCammesa"));
 			consecuenteModel.setProperty("/FechaHora", cammesaModel.getProperty("/FechaHora"));
 			this.addConsecuente = true;
+			this._forceComboRefresh("ComboMotivo",novedadesModel.getProperty("/CodMotivo") )
+			this._forceComboRefresh("ComboMotivo2",novedadesModel.getProperty("/CodMotivo") )
+			this._forceComboRefresh("ComboCausa",novedadesModel.getProperty("/CodCausa") )
+			this._forceComboRefresh("ComboCausa2",novedadesModel.getProperty("/CodCausa") )
+			
 		},
 		onSelectReporte: function (evt) {
 			var Reporte = evt.getSource().getSelectedKey()
 			this.loadNSEmpresas(this.society, Reporte);
+		},
+		_forceComboRefresh: function (sComboId, sSelectedKey) {
+			var oCombo = this.getView().byId(sComboId);
+			if (oCombo) {
+				oCombo.setSelectedKey(""); 
+				oCombo.getBinding("items").refresh(); 
+
+				setTimeout(() => {
+					oCombo.setSelectedKey(sSelectedKey);
+				}, 0);
+			}
 		}
+
 
 	});
 });

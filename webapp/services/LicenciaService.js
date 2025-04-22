@@ -20,7 +20,7 @@ sap.ui.define([
 			var odataModel = oDataService.getModel("TransenerOperaciones");
 			var IdNovedad = AppManagementHelper.getModel("SelectedNovedadJsonModel").getProperty("/novedadId") || AppManagementHelper.getModel("UtilsJsonModel").getProperty("/IdNovedad");
 			data.IdNovedad = IdNovedad;
-			odataModel.create("/NSLicenciasRelSet", data, {		
+			odataModel.create("/NSLicenciasRelSet", data, {
 				success: onSuccessCallback,
 				error: onErrorCallback
 			});
@@ -32,11 +32,11 @@ sap.ui.define([
 				promises.push(this.saveLicence(arrLT[i]));
 			}
 			//TODO agregar reflection para hacerlas todas aunque una falle
-			return Promise.all(promises).then(()=> {
+			return Promise.all(promises).then(() => {
 				AppManagementHelper.getModel("LicencesListJsonModel").getData().Licences = [];
 				var now = new Date();
 				AppManagementHelper.getModel("NovedadesFormJsonModel").setProperty("/Anio", now.getFullYear().toString());
-				AppManagementHelper.getModel("LTFormJsonModel").setProperty("/IdLicencia","");
+				AppManagementHelper.getModel("LTFormJsonModel").setProperty("/IdLicencia", "");
 				AppManagementHelper.getModel("LicencesListJsonModel").updateBindings(true);
 				AppManagementHelper.getModel("NovedadesFormJsonModel").updateBindings(true);
 			});
@@ -44,40 +44,45 @@ sap.ui.define([
 
 		loadList: function (empresa, idNovedad) {
 			let entity = "/NSLicenciasRelSet";
-			oDataService.getModel("TransenerOperaciones").read(entity, {
-				filters: [
-					new sap.ui.model.Filter({
-						path: "Empresa",
-						operator: sap.ui.model.FilterOperator.EQ,
-						value1: empresa
-					}),
-					new sap.ui.model.Filter({
-						path: "IdNovedad",
-						operator: sap.ui.model.FilterOperator.EQ,
-						value1: idNovedad
-					})
-				],
-				success: function (res) {
-					AppManagementHelper.getModel("LicencesListJsonModel").setData({
-						Licences: res.results
-					})
-				},
-				error: function () {
-					//TODO
-				}
+
+			return new Promise((resolve, reject) => {
+				oDataService.getModel("TransenerOperaciones").read(entity, {
+					filters: [
+						new sap.ui.model.Filter({
+							path: "Empresa",
+							operator: sap.ui.model.FilterOperator.EQ,
+							value1: empresa
+						}),
+						new sap.ui.model.Filter({
+							path: "IdNovedad",
+							operator: sap.ui.model.FilterOperator.EQ,
+							value1: idNovedad
+						})
+					],
+					success: function (res) {
+						AppManagementHelper.getModel("LicencesListJsonModel").setData({
+							Licences: res.results
+						});
+						resolve(res.results);
+					},
+					error: function (err) {
+						reject(err);
+					}
+				});
 			});
-		},
-		
-		onDeleteLicence : function(licencia ,onSuccessCallback,onErrorCallback){
+		}
+		,
+
+		onDeleteLicence: function (licencia, onSuccessCallback, onErrorCallback) {
 			var odataModel = oDataService.getModel("TransenerOperaciones");
 			var url = this.getPathURL(licencia);
-			odataModel.remove(url, {		
+			odataModel.remove(url, {
 				success: onSuccessCallback,
 				error: onErrorCallback
 			});
 		},
-		getPathURL : function(licencia){
-			return "/NSLicenciasRelSet(Empresa='"+licencia.Empresa+"',IdNovedad='"+licencia.IdNovedad+"',IdLicencia='"+licencia.IdLicencia+"',Anio='"+licencia.Anio+"')";
+		getPathURL: function (licencia) {
+			return "/NSLicenciasRelSet(Empresa='" + licencia.Empresa + "',IdNovedad='" + licencia.IdNovedad + "',IdLicencia='" + licencia.IdLicencia + "',Anio='" + licencia.Anio + "')";
 		}
 	};
 });

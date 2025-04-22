@@ -290,7 +290,7 @@
 																	<FlexItemData growFactor="1"/>
 																</layoutData>
 															</ComboBox>
-															<ComboBox change="onChangeMotivo" valueState="{NovedadesFormJsonModel>/CodMotivoState}" editable="{UserDataModel>/oVisualizador}"
+															<ComboBox change="onChangeMotivo" id="ComboMotivo2" valueState="{NovedadesFormJsonModel>/CodMotivoState}" editable="{UserDataModel>/oVisualizador}"
 																valueStateText="{NovedadesFormJsonModel>/CodMotivoStateMessage}" selectedKey="{NovedadesFormJsonModel>/CodMotivo}"
 																items="{ path: 'MotivosJsonModel>/Motivos'}" width="100%"  app:inputId="NMotivo">
 																<core:Item key="{MotivosJsonModel>CodigoMotivo}" text="{MotivosJsonModel>DescMotivo}"/>
@@ -388,7 +388,7 @@
 																	<FlexItemData growFactor="1"/>
 																</layoutData>
 															</Label>
-															<ComboBox valueState="{NovedadesFormJsonModel>/CodCausaState}" valueStateText="{NovedadesFormJsonModel>/CodCausaStateMessage}"
+															<ComboBox valueState="{NovedadesFormJsonModel>/CodCausaState}" id="ComboCausa" valueStateText="{NovedadesFormJsonModel>/CodCausaStateMessage}"
 																editable="{UserDataModel>/oVisualizador}" items="{CausasJsonModel>/Causas}" width="80px" selectedKey="{NovedadesFormJsonModel>/CodCausa}"
 																app:inputId="NCausa" change="causaChanged">
 																<core:Item key="{CausasJsonModel>CodigoCausa}" text="{CausasJsonModel>CodigoCausa}"/>
@@ -396,7 +396,7 @@
 																	<FlexItemData growFactor="1"/>
 																</layoutData>
 															</ComboBox>
-															<ComboBox valueState="{NovedadesFormJsonModel>/CodCausaState}" valueStateText="{NovedadesFormJsonModel>/CodCausaStateMessage}"
+															<ComboBox valueState="{NovedadesFormJsonModel>/CodCausaState}" id="ComboCausa2" valueStateText="{NovedadesFormJsonModel>/CodCausaStateMessage}"
 																change="causaChanged" editable="{UserDataModel>/oVisualizador}" selectedKey="{NovedadesFormJsonModel>/CodCausa}"
 																items="{CausasJsonModel>/Causas}" width="100%" app:inputId="NCausa">
 																<core:Item key="{CausasJsonModel>CodigoCausa}" text="{CausasJsonModel>DescCausa}"/>
