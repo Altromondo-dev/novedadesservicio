@@ -1315,54 +1315,59 @@ sap.ui.define([
 			oConsequentModel.refresh(true);
 		},
 
-		editConsecuenteForm: function (oEvent) {
-			var object = oEvent.getSource().getBindingContext("ConsequentListJsonModel").getObject();
-
-			object.editMode = true;
-
-			console.log(object)
-
-
-			var tipo = object.CodTipo;;
-			var estacion = object.Tplnr;
-
-			if (!object.IdNovedad) {
+		editConsecuenteForm: async function (oEvent) {
+			var oContext = oEvent.getSource().getBindingContext("ConsequentListJsonModel");
+			var oObject = oContext.getObject();
+		
+			oObject.editMode = true;
+				
+			var sTipo = oObject.CodTipo;
+			var sEstacion = oObject.Tplnr;
+		
+			var oFormModel = AppManagementHelper.getModel("ConsecuentesFormJsonModel");
+		
+			if (!oObject.IdNovedad) {
 				this.addConsecuente = false;
-				AppManagementHelper.getModel("ConsecuentesFormJsonModel").setData(object);
-
+				oFormModel.setData(oObject);
 				return;
 			} else {
 				this.addConsecuente = true;
 			}
-
-			AppManagementHelper.getModel("ConsecuentesFormJsonModel").setData(object);
-
-			NovedadesService.findNovedad([], object.IdNovedad).then(function (res) {
-				var comentarios = res.ComentariosSet.results[0];
-				var informe = res.InformeCammesaSet.results[0];
-
-				if (comentarios) {
-					jQuery.extend(object, comentarios);
+		
+			oFormModel.setData(oObject);
+		
+			try {
+				var res = await NovedadesService.findNovedad([], oObject.IdNovedad);
+				var oComentarios = res.ComentariosSet?.results?.[0];
+				var oInforme = res.InformeCammesaSet?.results?.[0];
+		
+				if (oComentarios) {
+					Object.assign(oObject, oComentarios);
 				}
-
-				if (informe) {
-					informe.Autoriza = informe.Autoriza === "S";
-					informe.InformaCammesa = informe.InformaCammesa === "S";
-					jQuery.extend(object, informe);
+		
+				if (oInforme) {
+					oInforme.Autoriza = oInforme.Autoriza === "S";
+					oInforme.InformaCammesa = oInforme.InformaCammesa === "S";
+					Object.assign(oObject, oInforme);
 				}
-
-
-
-			});
-			var cmbUbicacion = this.byId("ConsequentUbicacion")
-			var codigo = cmbUbicacion.getSelectedItem().getBindingContext("EstacionesJsonModel").getObject().Estacion
-
-			if (this.lineas.includes(tipo)) {
-				EquiposService.loadEquipos(tipo, null, null, this.society, AppManagementHelper.getModel("EquiposConsecuentesJsonModel"));
-			} else if (tipo && estacion) {
-				EquiposService.loadEquipos(tipo, estacion, codigo, this.society, AppManagementHelper.getModel("EquiposConsecuentesJsonModel"));
+		
+				oFormModel.setData(oObject); 
+			} catch (error) {
+				console.error("Error al cargar datos de la novedad:", error);
+			}
+		
+			var oCmbUbicacion = this.byId("ConsequentUbicacion");
+			var oCmbBindingCtx = oCmbUbicacion.getSelectedItem()?.getBindingContext("EstacionesJsonModel");
+		
+			var sCodigoUbicacion = oCmbBindingCtx?.getObject()?.Estacion || null;
+		
+			if (this.lineas.includes(sTipo)) {
+				EquiposService.loadEquipos(sTipo, null, null, this.society, AppManagementHelper.getModel("EquiposConsecuentesJsonModel"));
+			} else if (sTipo && sEstacion && sCodigoUbicacion) {
+				EquiposService.loadEquipos(sTipo, sEstacion, sCodigoUbicacion, this.society, AppManagementHelper.getModel("EquiposConsecuentesJsonModel"));
 			}
 		},
+		
 
 		deleteConsecuenteCreated: function (evt) {
 			var object = evt.getSource().getBindingContext("ConsequentListJsonModel").getObject();
@@ -5886,13 +5891,17 @@ sap.ui.define([
 			if (oSelectedNovedad.ComentariosSet.results.length > 0) {
 				AppManagementHelper.getModel("CommentsFormJsonModel").setData(oSelectedNovedad.ComentariosSet.results[0]);
 			}
+
+			if(oSelectedNovedad.ConsecuentesSet.results.length > 0){
+				AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/", oSelectedNovedad.ConsecuentesSet.results[0]);
+			}
 			if (oSelectedNovedad.ENSRegXNS_NAV.results.length > 0) {
 				oSelectedNovedad.ENSRegXNS_NAV.results.map(function (element) {
 					element.ENSRow = (element.Corte / 60) * element.Potencia;
 				});
 			}
 			AppManagementHelper.getModel("NovedadesFormJsonModel").setData(oSelectedNovedad);
-			AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/", []);
+			// AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/", []);
 			AppManagementHelper.getModel("ConsequentListJsonModel").setData({
 				Consequents: oSelectedNovedad.ConsecuentesSet.results
 			});
