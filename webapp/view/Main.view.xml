@@ -14,7 +14,7 @@
 							<Button icon="sap-icon://document" text="Nuevo" visible="{UserDataModel>/oVisualizador}" press="cleanFormsByTab" class="buttonInverted"/>
 							<Button icon="sap-icon://delete" text="Borrar" visible="{UserDataModel>/oVisualizador}" press="deleteNovedad" class="buttonInverted"/>
 							<MenuButton text="Informes" defaultAction="onDefaultAction" icon="sap-icon://hint" useDefaultActionOnly="true" class="buttonInverted"
-								menuPosition="RightBottom">
+								menuPosition="RightTop">
 								<menu>
 									<Menu itemSelected="onMenuAction">
 										<items>
@@ -36,7 +36,7 @@
 						<contentRight>
 							<Button icon="sap-icon://save" text="{ parts: [ 'UtilsJsonModel>/editableMode' ], formatter: '.formatName' }" type="Emphasized"
 								press="addOperation" visible="{UserDataModel>/oVisualizador}" class="buttonInverted"/>
-								 <Text text="V {UtilsJsonModel>/appVersion}" />
+								 <Text text="V {appCurrentInfo>/version}" />
 						</contentRight>
 					</Bar>
 				</footer>

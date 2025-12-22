@@ -98,12 +98,14 @@ sap.ui.define([
 
 		},
 
+
 		onInit: function () {
 
 			sap.ui.getCore().setModel(this.getView(), "viewModel")
 
 			var cUrl = this.getBaseURL();
 			this.loadUserDataModel();
+			this.getVersion();
 			this.globalBusyDialog = new sap.m.BusyDialog();
 			window.onbeforeunload = function () {
 				var bIsEdit = AppManagementHelper.getModel("UtilsJsonModel").getProperty("/editableMode");
@@ -113,8 +115,33 @@ sap.ui.define([
 					return null;
 				}
 			}
-
 		},
+		getVersion: function () {
+			const oComponent = this.getOwnerComponent();
+			const oView = this.getView();
+
+		
+			const sVersion = oComponent.getManifestEntry("/sap.app/applicationVersion/version");
+
+	
+			let oModel = sap.ui.getCore().getModel("appCurrentInfo");
+
+			if (!oModel) {
+				oModel = new sap.ui.model.json.JSONModel();
+				oModel.setSizeLimit(9999);
+
+			
+				sap.ui.getCore().setModel(oModel, "appCurrentInfo");
+				oView.setModel(oModel, "appCurrentInfo");
+			}
+
+	
+			oModel.setData({
+				version: sVersion
+			});
+			oView.setModel(oModel, "appCurrentInfo");
+		},
+
 		loadUserDataModel: function (callback) {
 
 			var UserDataService = this;
@@ -1318,14 +1345,14 @@ sap.ui.define([
 		editConsecuenteForm: async function (oEvent) {
 			var oContext = oEvent.getSource().getBindingContext("ConsequentListJsonModel");
 			var oObject = oContext.getObject();
-		
+
 			oObject.editMode = true;
-				
+
 			var sTipo = oObject.CodTipo;
 			var sEstacion = oObject.Tplnr;
-		
+
 			var oFormModel = AppManagementHelper.getModel("ConsecuentesFormJsonModel");
-		
+
 			if (!oObject.IdNovedad) {
 				this.addConsecuente = false;
 				oFormModel.setData(oObject);
@@ -1333,41 +1360,41 @@ sap.ui.define([
 			} else {
 				this.addConsecuente = true;
 			}
-		
+
 			oFormModel.setData(oObject);
-		
+
 			try {
 				var res = await NovedadesService.findNovedad([], oObject.IdNovedad);
 				var oComentarios = res.ComentariosSet?.results?.[0];
 				var oInforme = res.InformeCammesaSet?.results?.[0];
-		
+
 				if (oComentarios) {
 					Object.assign(oObject, oComentarios);
 				}
-		
+
 				if (oInforme) {
 					oInforme.Autoriza = oInforme.Autoriza === "S";
 					oInforme.InformaCammesa = oInforme.InformaCammesa === "S";
 					Object.assign(oObject, oInforme);
 				}
-		
-				oFormModel.setData(oObject); 
+
+				oFormModel.setData(oObject);
 			} catch (error) {
 				console.error("Error al cargar datos de la novedad:", error);
 			}
-		
+
 			var oCmbUbicacion = this.byId("ConsequentUbicacion");
 			var oCmbBindingCtx = oCmbUbicacion.getSelectedItem()?.getBindingContext("EstacionesJsonModel");
-		
+
 			var sCodigoUbicacion = oCmbBindingCtx?.getObject()?.Estacion || null;
-		
+
 			if (this.lineas.includes(sTipo)) {
 				EquiposService.loadEquipos(sTipo, null, null, this.society, AppManagementHelper.getModel("EquiposConsecuentesJsonModel"));
 			} else if (sTipo && sEstacion && sCodigoUbicacion) {
 				EquiposService.loadEquipos(sTipo, sEstacion, sCodigoUbicacion, this.society, AppManagementHelper.getModel("EquiposConsecuentesJsonModel"));
 			}
 		},
-		
+
 
 		deleteConsecuenteCreated: function (evt) {
 			var object = evt.getSource().getBindingContext("ConsequentListJsonModel").getObject();
@@ -5892,7 +5919,7 @@ sap.ui.define([
 				AppManagementHelper.getModel("CommentsFormJsonModel").setData(oSelectedNovedad.ComentariosSet.results[0]);
 			}
 
-			if(oSelectedNovedad.ConsecuentesSet.results.length > 0){
+			if (oSelectedNovedad.ConsecuentesSet.results.length > 0) {
 				AppManagementHelper.getModel("ConsecuentesFormJsonModel").setProperty("/", oSelectedNovedad.ConsecuentesSet.results[0]);
 			}
 			if (oSelectedNovedad.ENSRegXNS_NAV.results.length > 0) {
