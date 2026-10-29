@@ -1768,11 +1768,17 @@ sap.ui.define([
 							new sap.m.HBox({
 								items: [
 									new sap.m.Label({
-										text: "Región",
+										text: "Ubicación",
 										width: "100px"
 									}).addStyleClass("CustomLabel"),
 									new sap.m.ComboBox({
 										selectedKey: "{NovedadesPorEquiposJsonModel>/region}",
+										enabled: {
+											path: "NovedadesPorEquiposJsonModel>/tipo",
+											formatter: function (tipo) {
+												return !that.lineas.includes(tipo);
+											}
+										},
 										items: {
 											path: "EstacionesJsonModel>/Estaciones",
 											template: new sap.ui.core.Item({
@@ -1787,6 +1793,12 @@ sap.ui.define([
 									}),
 									new sap.m.ComboBox({
 										selectedKey: "{NovedadesPorEquiposJsonModel>/region}",
+										enabled: {
+											path: "NovedadesPorEquiposJsonModel>/tipo",
+											formatter: function (tipo) {
+												return !that.lineas.includes(tipo);
+											}
+										},
 										items: {
 											path: "EstacionesJsonModel>/Estaciones",
 											template: new sap.ui.core.Item({
@@ -1809,6 +1821,7 @@ sap.ui.define([
 									}).addStyleClass("CustomLabel"),
 									new sap.m.ComboBox({
 										selectedKey: "{NovedadesPorEquiposJsonModel>/tipo}",
+										change: [this.onTipoReporteTipoEquipoChange, this],
 										items: {
 											path: "TipoEquipoJsonModel>/TipoEquipo",
 											template: new sap.ui.core.Item({
@@ -1823,6 +1836,7 @@ sap.ui.define([
 									}),
 									new sap.m.ComboBox({
 										selectedKey: "{NovedadesPorEquiposJsonModel>/tipo}",
+										change: [this.onTipoReporteTipoEquipoChange, this],
 										items: {
 											path: "TipoEquipoJsonModel>/TipoEquipo",
 											template: new sap.ui.core.Item({
@@ -1889,6 +1903,13 @@ sap.ui.define([
 			this.getView().addDependent(this.dialogReporteTipoEquipo);
 			this.dialogReporteTipoEquipo.setModel(oModel, "novs");
 			this.dialogReporteTipoEquipo.open();
+		},
+		onTipoReporteTipoEquipoChange: function () {
+			// las novedades de líneas no tienen ubicación, filtrar por ella deja el reporte vacío
+			var model = AppManagementHelper.getModel("NovedadesPorEquiposJsonModel");
+			if (this.lineas.includes(model.getProperty("/tipo"))) {
+				model.setProperty("/region", null);
+			}
 		},
 		reportENS: function () {
 			var that = this;
@@ -2033,7 +2054,7 @@ sap.ui.define([
 				value1: this.society
 			}));
 
-			if (filterData.region) {
+			if (filterData.region && !this.lineas.includes(filterData.tipo)) {
 				filters.push(new sap.ui.model.Filter({
 					path: "Estacion",
 					operator: sap.ui.model.FilterOperator.EQ,
@@ -2083,7 +2104,7 @@ sap.ui.define([
 					var nov = res[i];
 					var row = [];
 					row.push(i + 1);
-					row.push(nov.Estacion || nov.Extremos || "");
+					row.push((that.lineas.includes(filterData.tipo) ? nov.Extremos : nov.Estacion) || "");
 					row.push("");
 					row.push(nov.Equipo || "");
 					row.push(nov.Circuito || "");

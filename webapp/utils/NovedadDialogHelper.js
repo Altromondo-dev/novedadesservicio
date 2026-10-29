@@ -31,7 +31,63 @@ sap.ui.define(["Transener/Operaciones/NovedadesServicio/utils/AppManagementHelpe
 		getDialog: function (novserv, mainController) {
 			this.mainController = mainController;
 			this.NovedadesService = novserv;
+			// la lista se abre filtrada solo por fechas, así que se limpian los combos de filtro
+			var oDateModel = AppManagementHelper.getModel("DateFilterSelectionJsonModel");
+			oDateModel.setProperty("/TipoEquipo", null);
+			oDateModel.setProperty("/Ubicacion", null);
+			oDateModel.setProperty("/Equipo", null);
+			oDateModel.setProperty("/CodNovedad", null);
 			var oSorter = new sap.ui.model.Sorter("InicioNove", false, false);
+			var oTable = new sap.m.Table({
+				growing: false,
+				mode: sap.m.ListMode.SingleSelectMaster,
+				selectionChange: [this.preSelectNovedad, this],
+				columns: [
+					new sap.m.Column({
+						header: new sap.m.Text({
+							text: "Id Novedad"
+						}),
+					}),
+					new sap.m.Column({
+						header: new sap.m.Text({
+							text: "Codigo de Novedad"
+						}),
+					}),
+					new sap.m.Column({
+						header: new sap.m.Text({
+							text: "Equipo"
+						}),
+					}),
+					new sap.m.Column({
+						header: new sap.m.Text({
+							text: "Inicio de novedad"
+						}),
+					})
+				],
+				items: {
+					path: "NovedadesListJsonModel>/Novedades",
+					sorter: oSorter,
+					template: new sap.m.ColumnListItem({
+						cells: [
+							new sap.m.Text({
+								text: "{NovedadesListJsonModel>IdNovedad}"
+							}),
+							new sap.m.Text({
+								text: "{NovedadesListJsonModel>CodNovedad}"
+							}),
+							new sap.m.Text({
+								text: "{NovedadesListJsonModel>Equnr}"
+							}),
+							new sap.m.Text({
+								text: {
+									path: "NovedadesListJsonModel>InicioNove",
+									formatter: $.proxy(this.formatDateTime, this)
+								}
+							})
+						]
+					})
+				},
+			});
 			var oDialog = new sap.m.Dialog({
 				title: 'Novedades',
 				contentWidth: "950px",
@@ -79,7 +135,7 @@ sap.ui.define(["Transener/Operaciones/NovedadesServicio/utils/AppManagementHelpe
 												items: {
 													path: "EstacionesJsonModel>/Estaciones",
 													template: new sap.ui.core.Item({
-														key: "{EstacionesJsonModel>Estacion}",
+														key: "{EstacionesJsonModel>Codigo}",
 														text: "{EstacionesJsonModel>Codigo}"
 													})
 												},
@@ -105,12 +161,12 @@ sap.ui.define(["Transener/Operaciones/NovedadesServicio/utils/AppManagementHelpe
 												items: {
 													path: "novFilterEquipos>/Equipos",
 													template: new sap.ui.core.Item({
-														key: "{novFilterEquipos>Codequipo}",
+														key: "{novFilterEquipos>Codigo}",
 														text: "{novFilterEquipos>Codigo}"
 													})
 												},
 												selectedKey: "{DateFilterSelectionJsonModel>/Equipo}",
-												change: [this.handleDateFilter, this],
+												change: [this.applyListFilters, this],
 												layoutData: new sap.m.FlexItemData({
 													growFactor: 1,
 													baseSize: "0"
@@ -153,68 +209,41 @@ sap.ui.define(["Transener/Operaciones/NovedadesServicio/utils/AppManagementHelpe
 													baseSize: "0"
 												})
 											}),
-											new sap.m.Button({
-												icon: "sap-icon://clear-filter",
-												press: [this.cleanDates, this],
+											new sap.m.Label({
+												text: "Cód. Novedad:",
 												layoutData: new sap.m.FlexItemData({
-													growFactor: 2,
+													growFactor: 1,
 													baseSize: "0"
 												})
+											}).addStyleClass("sapUiSmallMarginBeginEnd sapUiSmallMarginTop"),
+											new sap.m.ComboBox({
+												items: {
+													path: "TransenerOperaciones>/FixedValuesSet",
+													filters: [
+														new sap.ui.model.Filter("Tabname", sap.ui.model.FilterOperator.EQ, "ZTAP_OP_NS_GRAL"),
+														new sap.ui.model.Filter("Fieldname", sap.ui.model.FilterOperator.EQ, "COD_NOVEDAD")
+													],
+													template: new sap.ui.core.Item({
+														key: "{TransenerOperaciones>Valkey}",
+														text: "{TransenerOperaciones>Valkey} - {TransenerOperaciones>Valtext}"
+													})
+												},
+												selectedKey: "{DateFilterSelectionJsonModel>/CodNovedad}",
+												change: [this.applyListFilters, this],
+												layoutData: new sap.m.FlexItemData({
+													growFactor: 1,
+													baseSize: "0"
+												})
+											}).addStyleClass("sapUiTinyMarginEnd"),
+											new sap.m.Button({
+												icon: "sap-icon://clear-filter",
+												press: [this.cleanDates, this]
 											}).addStyleClass("sapUiTinyMarginBegin buttonInverted btn-display")
 										]
 									}).addStyleClass("sapUiTinyMarginBeginEnd")
 								]
 							}).addStyleClass("customPanel"),
-							new sap.m.Table({
-								growing: false,
-								mode: sap.m.ListMode.SingleSelectMaster,
-								selectionChange: [this.preSelectNovedad, this],
-								columns: [
-									new sap.m.Column({
-										header: new sap.m.Text({
-											text: "Id Novedad"
-										}),
-									}),
-									new sap.m.Column({
-										header: new sap.m.Text({
-											text: "Codigo de Novedad"
-										}),
-									}),
-									new sap.m.Column({
-										header: new sap.m.Text({
-											text: "Equipo"
-										}),
-									}),
-									new sap.m.Column({
-										header: new sap.m.Text({
-											text: "Inicio de novedad"
-										}),
-									})
-								],
-								items: {
-									path: "NovedadesListJsonModel>/Novedades",
-									sorter: oSorter,
-									template: new sap.m.ColumnListItem({
-										cells: [
-											new sap.m.Text({
-												text: "{NovedadesListJsonModel>IdNovedad}"
-											}),
-											new sap.m.Text({
-												text: "{NovedadesListJsonModel>CodNovedad}"
-											}),
-											new sap.m.Text({
-												text: "{NovedadesListJsonModel>Equnr}"
-											}),
-											new sap.m.Text({
-												text: {
-													path: "NovedadesListJsonModel>InicioNove",
-													formatter: $.proxy(this.formatDateTime, this)
-												}
-											})
-										]
-									})
-								},
-							})
+							oTable
 						]
 					})
 				],
@@ -224,6 +253,7 @@ sap.ui.define(["Transener/Operaciones/NovedadesServicio/utils/AppManagementHelpe
 				}).addStyleClass("buttonInverted")
 			});
 			this.oDialog = oDialog;
+			this.oTable = oTable;
 			return oDialog;
 		},
 
@@ -245,19 +275,57 @@ sap.ui.define(["Transener/Operaciones/NovedadesServicio/utils/AppManagementHelpe
 
 		cleanDates: function () {
 			this.cleanDateModel();
+			this.applyListFilters();
 			if (!NovedadesService) {
 				NovedadesService = this.NovedadesService;
 			}
 			NovedadesService.FIND([]);
 		},
 
+		// Equipo, Ubicación y Código de Novedad se filtran sobre la lista ya cargada: el backend no
+		// encuentra coincidencias al filtrar por Equnr, filtra la ubicación contra la columna Estacion
+		// (que las novedades no completan, la ubicación queda en Tplnr) y no procesa CodNovedad.
+		applyListFilters: function () {
+			var oDateModel = AppManagementHelper.getModel("DateFilterSelectionJsonModel");
+			var equipo = oDateModel.getProperty("/Equipo");
+			var ubicacion = oDateModel.getProperty("/Ubicacion");
+			var codNovedad = oDateModel.getProperty("/CodNovedad");
+			var aFilter = [];
+			if (equipo) {
+				var oEquiposModel = this.oDialog.getModel("novFilterEquipos");
+				var oEquipo = ((oEquiposModel && oEquiposModel.getProperty("/Equipos")) || []).find(function (e) {
+					return e.Codigo === equipo;
+				});
+				aFilter.push(this._anyOf("Equnr", [equipo, oEquipo && oEquipo.Codequipo]));
+			}
+			if (ubicacion) {
+				var oEstacion = (AppManagementHelper.getModel("EstacionesJsonModel").getProperty("/Estaciones") || []).find(function (e) {
+					return e.Codigo === ubicacion;
+				});
+				aFilter.push(this._anyOf("Tplnr", [ubicacion, oEstacion && oEstacion.Estacion]));
+			}
+			if (codNovedad) {
+				aFilter.push(new sap.ui.model.Filter("CodNovedad", sap.ui.model.FilterOperator.EQ, codNovedad));
+			}
+			this.oTable.getBinding("items").filter(aFilter);
+		},
+
+		// algunas novedades guardan la ubicación/equipo con el código interno (?0100...) en vez del código corto
+		_anyOf: function (sPath, aValues) {
+			return new sap.ui.model.Filter({
+				filters: aValues.filter(Boolean).map(function (value) {
+					return new sap.ui.model.Filter(sPath, sap.ui.model.FilterOperator.EQ, value);
+				}),
+				and: false
+			});
+		},
+
 		handleDateFilter: function () {
+			this.applyListFilters();
 			var aFilter = [];
 			var oDateModel = AppManagementHelper.getModel("DateFilterSelectionJsonModel");
 			var dInicioNovedad = oDateModel.getProperty("/InicioNove");
 			var dFinNovedad = oDateModel.getProperty("/FechaFinNove");
-			var equipo = oDateModel.getProperty("/Equipo");
-			var estacion = oDateModel.getProperty("/Ubicacion");
 			var tipo = oDateModel.getProperty("/TipoEquipo");
 
 			if ((dInicioNovedad !== null && dFinNovedad !== null) && (dInicioNovedad <= dFinNovedad)) {
@@ -266,12 +334,6 @@ sap.ui.define(["Transener/Operaciones/NovedadesServicio/utils/AppManagementHelpe
 				//aFilter.push(new sap.ui.model.Filter("FechaFinNove", sap.ui.model.FilterOperator.LE, dFinNovedad));
 				if (!NovedadesService) {
 					NovedadesService = this.NovedadesService;
-				}
-				if (equipo) {
-					aFilter.push(new sap.ui.model.Filter("Equnr", sap.ui.model.FilterOperator.EQ, equipo));
-				}
-				if (estacion) {
-					aFilter.push(new sap.ui.model.Filter("Estacion", sap.ui.model.FilterOperator.EQ, estacion));
 				}
 				if (tipo) {
 					aFilter.push(new sap.ui.model.Filter("CodTipo", sap.ui.model.FilterOperator.EQ, tipo));
@@ -429,11 +491,16 @@ sap.ui.define(["Transener/Operaciones/NovedadesServicio/utils/AppManagementHelpe
 			var tipo = AppManagementHelper.getModel("DateFilterSelectionJsonModel").getProperty("/TipoEquipo");
 			var novFilterEquipos = new sap.ui.model.json.JSONModel({});
 			this.oDialog.setModel(novFilterEquipos, "novFilterEquipos");
+			AppManagementHelper.getModel("DateFilterSelectionJsonModel").setProperty("/Equipo", null);
 			if (this.lineas.includes(tipo)) {
 				AppManagementHelper.getModel("DateFilterSelectionJsonModel").setProperty("/Ubicacion", null);
-				EquiposService.loadEquipos(tipo, null, this.mainController.society, novFilterEquipos);
+				EquiposService.loadEquipos(tipo, null, null, this.mainController.society, novFilterEquipos);
 			} else if (tipo && estacion) {
-				EquiposService.loadEquipos(tipo, estacion, this.mainController.society, novFilterEquipos);
+				var oEstacion = (AppManagementHelper.getModel("EstacionesJsonModel").getProperty("/Estaciones") || []).find(function (e) {
+					return e.Codigo === estacion;
+				});
+				EquiposService.loadEquipos(tipo, estacion, oEstacion ? oEstacion.Estacion : null, this.mainController.society,
+					novFilterEquipos);
 			}
 			this.handleDateFilter();
 		},
