@@ -1768,17 +1768,11 @@ sap.ui.define([
 							new sap.m.HBox({
 								items: [
 									new sap.m.Label({
-										text: "Ubicación",
+										text: "Región",
 										width: "100px"
 									}).addStyleClass("CustomLabel"),
 									new sap.m.ComboBox({
 										selectedKey: "{NovedadesPorEquiposJsonModel>/region}",
-										enabled: {
-											path: "NovedadesPorEquiposJsonModel>/tipo",
-											formatter: function (tipo) {
-												return !that.lineas.includes(tipo);
-											}
-										},
 										items: {
 											path: "EstacionesJsonModel>/Estaciones",
 											template: new sap.ui.core.Item({
@@ -1793,12 +1787,6 @@ sap.ui.define([
 									}),
 									new sap.m.ComboBox({
 										selectedKey: "{NovedadesPorEquiposJsonModel>/region}",
-										enabled: {
-											path: "NovedadesPorEquiposJsonModel>/tipo",
-											formatter: function (tipo) {
-												return !that.lineas.includes(tipo);
-											}
-										},
 										items: {
 											path: "EstacionesJsonModel>/Estaciones",
 											template: new sap.ui.core.Item({
@@ -1821,7 +1809,6 @@ sap.ui.define([
 									}).addStyleClass("CustomLabel"),
 									new sap.m.ComboBox({
 										selectedKey: "{NovedadesPorEquiposJsonModel>/tipo}",
-										change: [this.onTipoReporteTipoEquipoChange, this],
 										items: {
 											path: "TipoEquipoJsonModel>/TipoEquipo",
 											template: new sap.ui.core.Item({
@@ -1836,7 +1823,6 @@ sap.ui.define([
 									}),
 									new sap.m.ComboBox({
 										selectedKey: "{NovedadesPorEquiposJsonModel>/tipo}",
-										change: [this.onTipoReporteTipoEquipoChange, this],
 										items: {
 											path: "TipoEquipoJsonModel>/TipoEquipo",
 											template: new sap.ui.core.Item({
@@ -1904,12 +1890,31 @@ sap.ui.define([
 			this.dialogReporteTipoEquipo.setModel(oModel, "novs");
 			this.dialogReporteTipoEquipo.open();
 		},
-		onTipoReporteTipoEquipoChange: function () {
-			// las novedades de líneas no tienen ubicación, filtrar por ella deja el reporte vacío
-			var model = AppManagementHelper.getModel("NovedadesPorEquiposJsonModel");
-			if (this.lineas.includes(model.getProperty("/tipo"))) {
-				model.setProperty("/region", null);
+		// Los nodos de región (TNER-*) no son estaciones: para líneas no se filtra por extremos.
+		_esNodoRegion: function (codigo) {
+			return /^TNER-/i.test(codigo);
+		},
+
+		// En el backend las líneas tienen ubicación 'LINEAS', por lo que la ubicación elegida se aplica del lado del
+		// cliente sobre Extremos (códigos de estación unidos por '-', ej. 'HE-PU'). Sin ubicación o con un nodo de
+		// región se devuelven todas las líneas; con una estación, solo las que la tienen como extremo.
+		_filtrarLineasPorUbicacion: function (aNovedades, region) {
+			var oEstacion = (AppManagementHelper.getModel("EstacionesJsonModel").getProperty("/Estaciones") || []).find(function (e) {
+				return e.Estacion === region;
+			});
+			var codigo = oEstacion && oEstacion.Codigo ? String(oEstacion.Codigo).trim().toUpperCase() : "";
+			if (!codigo || this._esNodoRegion(codigo)) {
+				return aNovedades;
 			}
+			return aNovedades.filter(function (nov) {
+				var extremos = String(nov.Extremos || "").toUpperCase();
+				if (codigo.indexOf("-") !== -1) {
+					return ("-" + extremos + "-").indexOf("-" + codigo + "-") !== -1;
+				}
+				return extremos.split("-").some(function (extremo) {
+					return extremo.trim() === codigo;
+				});
+			});
 		},
 		reportENS: function () {
 			var that = this;
@@ -2099,12 +2104,15 @@ sap.ui.define([
 			this.globalBusyDialog.open();
 			ReportesService.getNovedadesPorTipoEquipo(filters).then(function (res) {
 				//debugger;
+				if (filterData.region && that.lineas.includes(filterData.tipo)) {
+					res = that._filtrarLineasPorUbicacion(res, filterData.region);
+				}
 
 				for (var i = 0; i < res.length; i++) {
 					var nov = res[i];
 					var row = [];
 					row.push(i + 1);
-					row.push((that.lineas.includes(filterData.tipo) ? nov.Extremos : nov.Estacion) || "");
+					row.push(nov.Estacion || nov.Extremos || "");
 					row.push("");
 					row.push(nov.Equipo || "");
 					row.push(nov.Circuito || "");

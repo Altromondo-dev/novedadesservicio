@@ -36,7 +36,7 @@ sap.ui.define(["Transener/Operaciones/NovedadesServicio/utils/AppManagementHelpe
 			oDateModel.setProperty("/TipoEquipo", null);
 			oDateModel.setProperty("/Ubicacion", null);
 			oDateModel.setProperty("/Equipo", null);
-			oDateModel.setProperty("/CodNovedad", null);
+			oDateModel.setProperty("/CodNovedad", []);
 			var oSorter = new sap.ui.model.Sorter("InicioNove", false, false);
 			var oTable = new sap.m.Table({
 				growing: false,
@@ -216,7 +216,7 @@ sap.ui.define(["Transener/Operaciones/NovedadesServicio/utils/AppManagementHelpe
 													baseSize: "0"
 												})
 											}).addStyleClass("sapUiSmallMarginBeginEnd sapUiSmallMarginTop"),
-											new sap.m.ComboBox({
+											this.oCodNovedadCombo = new sap.m.MultiComboBox({
 												items: {
 													path: "TransenerOperaciones>/FixedValuesSet",
 													filters: [
@@ -228,8 +228,7 @@ sap.ui.define(["Transener/Operaciones/NovedadesServicio/utils/AppManagementHelpe
 														text: "{TransenerOperaciones>Valkey} - {TransenerOperaciones>Valtext}"
 													})
 												},
-												selectedKey: "{DateFilterSelectionJsonModel>/CodNovedad}",
-												change: [this.applyListFilters, this],
+												selectionChange: [this.onCodNovedadChange, this],
 												layoutData: new sap.m.FlexItemData({
 													growFactor: 1,
 													baseSize: "0"
@@ -271,6 +270,15 @@ sap.ui.define(["Transener/Operaciones/NovedadesServicio/utils/AppManagementHelpe
 			});
 			oDateModel.setProperty("/InicioNove", null);
 			oDateModel.setProperty("/FechaFinNove", null);
+			oDateModel.setProperty("/CodNovedad", []);
+			if (this.oCodNovedadCombo) {
+				this.oCodNovedadCombo.setSelectedKeys([]);
+			}
+		},
+
+		onCodNovedadChange: function () {
+			AppManagementHelper.getModel("DateFilterSelectionJsonModel").setProperty("/CodNovedad", this.oCodNovedadCombo.getSelectedKeys());
+			this.applyListFilters();
 		},
 
 		cleanDates: function () {
@@ -304,8 +312,8 @@ sap.ui.define(["Transener/Operaciones/NovedadesServicio/utils/AppManagementHelpe
 				});
 				aFilter.push(this._anyOf("Tplnr", [ubicacion, oEstacion && oEstacion.Estacion]));
 			}
-			if (codNovedad) {
-				aFilter.push(new sap.ui.model.Filter("CodNovedad", sap.ui.model.FilterOperator.EQ, codNovedad));
+			if (codNovedad && codNovedad.length) {
+				aFilter.push(this._anyOf("CodNovedad", codNovedad));
 			}
 			this.oTable.getBinding("items").filter(aFilter);
 		},
