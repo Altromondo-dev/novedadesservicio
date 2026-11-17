@@ -1890,20 +1890,21 @@ sap.ui.define([
 			this.dialogReporteTipoEquipo.setModel(oModel, "novs");
 			this.dialogReporteTipoEquipo.open();
 		},
-		// Los nodos de región (TNER-*) no son estaciones: para líneas no se filtra por extremos.
-		_esNodoRegion: function (codigo) {
-			return /^TNER-/i.test(codigo);
+		// Los nodos de región (TNER-*, TBA - *) no son estaciones: para líneas no se filtra por extremos.
+		// Se identifican por el código (TNER-CENTR, TNER-NORTE, TNER-SUR) o por la descripción (TBA - SUR).
+		_esNodoRegion: function (codigo, descripcion) {
+			return /^TNER-/i.test(String(codigo || "").trim()) || /^(TNER|TBA)\s*-/i.test(String(descripcion || "").trim());
 		},
 
-		// En el backend las líneas tienen ubicación 'LINEAS', por lo que la ubicación elegida se aplica del lado del
-		// cliente sobre Extremos (códigos de estación unidos por '-', ej. 'HE-PU'). Sin ubicación o con un nodo de
+		// Las líneas no tienen estación propia, por lo que la ubicación elegida se aplica del lado del cliente
+		// sobre Extremos (códigos de estación unidos por '-', ej. 'HE-PU'). Sin ubicación o con un nodo de
 		// región se devuelven todas las líneas; con una estación, solo las que la tienen como extremo.
 		_filtrarLineasPorUbicacion: function (aNovedades, region) {
 			var oEstacion = (AppManagementHelper.getModel("EstacionesJsonModel").getProperty("/Estaciones") || []).find(function (e) {
 				return e.Estacion === region;
 			});
 			var codigo = oEstacion && oEstacion.Codigo ? String(oEstacion.Codigo).trim().toUpperCase() : "";
-			if (!codigo || this._esNodoRegion(codigo)) {
+			if (!codigo || this._esNodoRegion(codigo, oEstacion.Descripcion)) {
 				return aNovedades;
 			}
 			return aNovedades.filter(function (nov) {
